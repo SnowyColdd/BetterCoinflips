@@ -6,3 +6,4 @@ packages.config
 .vs/
 *.sln.DotSettings.*
 packages/
+BetterCoinflips/BetterCoinflips.csproj
