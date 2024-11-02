@@ -30,20 +30,26 @@ namespace BetterCoinflips.Configs
             4
         };
 
-        [Description("Time in seconds between coin toses.")]
+        [Description("Time in seconds between coin toses. Default: 5")]
         public double CoinCooldown { get; set; } = 5;
 
         [Description("The duration of the broadcast informing you about your 'reward'. Default: 3")]
-        public ushort BroadcastTime { get; set; } = 3;
+        public ushort BroadcastTime { get; set; } = 5;
         
         [Description("The duration of the hint telling you if you got heads or tails. Set to 0 or less to disable.")]
-        public float HintDuration { get; set; } = 3;
+        public float HintDuration { get; set; } = 5;
 
         [Description("The duration of the map blackout. Default: 10")]
         public float MapBlackoutTime { get; set; } = 10;
 
         [Description("The fuse time of the grenade falling on your head. Default: 3.25")]
         public double LiveGrenadeFuseTime { get; set; } = 3.25;
+
+        [Description("Determines the behavior of size reduction: 0 - Until first death, 1 - Persistent until end of game, 2 - Growing with each respawn. Default: 0")]
+        public int SizeReductionBehavior { get; set; } = 0;
+
+        [Description("Częstotliwość wzrostu gracza, gdy jest mały. Domyślnie: 0.2")]
+        public float GrowthFrequency { get; set; } = 0.2f;
 
         [Description("List of bad effects that can be applied to the players. List available at: https://exiled-team.github.io/EXILED/api/Exiled.API.Enums.EffectType.html")]
         public HashSet<EffectType> BadEffects { get; set; } = new()
@@ -83,14 +89,15 @@ namespace BetterCoinflips.Configs
             EffectType.RainbowTaste,
             EffectType.Scp1853,
             EffectType.Scp207,
-            EffectType.Vitality
+            EffectType.Vitality,
+            EffectType.SeveredHands
         };
 
         [Description("The % chance of receiving a Facility Manager keycard instead of a Containment Engineer one.")]
         public int RedCardChance { get; set; } = 15;
 
         [Description("The kick reason.")] 
-        public string KickReason { get; set; } = "The coin kicked your ass.";
+        public string KickReason { get; set; } = "Moneta postanowiła wywalić cię z serwera.";
 
         [Description("The list of SCP's that you can turn into by using the coin.")]
         public HashSet<RoleTypeId> ValidScps { get; set; } = new()
@@ -101,6 +108,7 @@ namespace BetterCoinflips.Configs
             RoleTypeId.Scp173,
             RoleTypeId.Scp0492,
             RoleTypeId.Scp939,
+            RoleTypeId.Scp079,
         };
 
         [Description("List of ignored roles for the PlayerSwap effect (#17)")]
@@ -216,17 +224,17 @@ namespace BetterCoinflips.Configs
 
         [Description("The chance of these good effects happening. It's a proportional chance not a % chance.")]
         public int KeycardChance { get; set; } = 20;
-        public int MedicalKitChance { get; set; } = 35;
-        public int TpToEscapeChance { get; set; } = 5;
+        public int MedicalKitChance { get; set; } = 30;
+        public int TpToEscapeChance { get; set; } = 15;
         public int HealChance { get; set; } = 10;
-        public int MoreHpChance { get; set; } = 10;
+        public int MoreHpChance { get; set; } = 20;
         public int HatChance { get; set; } = 10;
         public int RandomGoodEffectChance { get; set; } = 30;
-        public int OneAmmoLogicerChance { get; set; } = 1;
+        public int OneAmmoLogicerChance { get; set; } = 5;
         public int LightbulbChance { get; set; } = 15;
-        public int PinkCandyChance { get; set; } = 10;
+        public int PinkCandyChance { get; set; } = 20;
         public int BadRevoChance { get; set; } = 5;
-        public int EmptyHidChance { get; set; } = 5;
+        public int EmptyHidChance { get; set; } = 1;
         public int ForceRespawnChance { get; set; } = 15;
         public int SizeChangeChance { get; set; } = 20;
         public int RandomItemChance { get; set; } = 35;
@@ -234,26 +242,26 @@ namespace BetterCoinflips.Configs
         [Description("The chance of these bad effects happening. It's a proportional chance not a % chance.")]
         public int HpReductionChance { get; set; } = 20;
         public int TpToClassDCellsChance { get; set; } = 5;
-        public int RandomBadEffectChance { get; set; } = 20;
+        public int RandomBadEffectChance { get; set; } = 25;
         public int WarheadChance { get; set; } = 10;
-        public int LightsOutChance { get; set; } = 20;
+        public int LightsOutChance { get; set; } = 15;
         public int LiveHeChance { get; set; } = 30;
-        public int TrollFlashChance { get; set; } = 50;
-        public int ScpTpChance { get; set; } = 20;
-        public int OneHpLeftChance { get; set; } = 15;
+        public int TrollFlashChance { get; set; } = 35;
+        public int ScpTpChance { get; set; } = 10;
+        public int OneHpLeftChance { get; set; } = 10;
         public int PrimedVaseChance { get; set; } = 20;
         public int ShitPantsChance { get; set; } = 40;
-        public int FakeCassieChance { get; set; } = 50;
-        public int TurnIntoScpChance { get; set; } = 30;
-        public int InventoryResetChance { get; set; } = 20;
-        public int ClassSwapChance { get; set; } = 10;
-        public int InstantExplosionChance { get; set; } = 10;
-        public int PlayerSwapChance { get; set; } = 20;
+        public int FakeCassieChance { get; set; } = 20;
+        public int TurnIntoScpChance { get; set; } = 10;
+        public int InventoryResetChance { get; set; } = 10;
+        public int ClassSwapChance { get; set; } = 20;
+        public int InstantExplosionChance { get; set; } = 15;
+        public int PlayerSwapChance { get; set; } = 25;
         public int KickChance { get; set; } = 5;
         public int SpectSwapChance { get; set; } = 10;
-        public int TeslaTpChance { get; set; } = 15;
+        public int TeslaTpChance { get; set; } = 10;
         public int InventorySwapChance { get; set; } = 20;
-        public int HandcuffChance { get; set; } = 10;
+        public int HandcuffChance { get; set; } = 5;
         public int RandomTeleportChance { get; set; } = 15;
     }
 }
