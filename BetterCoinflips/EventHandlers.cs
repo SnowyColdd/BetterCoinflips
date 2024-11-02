@@ -16,7 +16,10 @@ namespace BetterCoinflips
         private static Config Config => Plugin.Instance.Config;
         private static Configs.Translations Translations => Plugin.Instance.Translation;
         private readonly System.Random _rd = new();
-        
+
+        private readonly Dictionary<string, int> _respawnCount = new();
+        public static Dictionary<string, int> RespawnCount = new();
+
         // ReSharper disable once FieldCanBeMadeReadOnly.Global
         public static Dictionary<ushort, int> CoinUses = new();
 
@@ -85,11 +88,11 @@ namespace BetterCoinflips
         public void OnCoinFlip(FlippingCoinEventArgs ev)
         {
             //broadcast message
-            string message = ""; 
+            string message = "";
             //used to remove the coin if uses run out, since they are checked before executing the effect
-            bool helper = false; 
+            bool helper = false;
             //check if player is on cooldown
-            bool flag = _cooldownDict.ContainsKey(ev.Player.RawUserId) 
+            bool flag = _cooldownDict.ContainsKey(ev.Player.RawUserId)
                         && (DateTime.UtcNow - _cooldownDict[ev.Player.RawUserId]).TotalSeconds < Config.CoinCooldown;
             if (flag)
             {
@@ -98,10 +101,10 @@ namespace BetterCoinflips
                 Log.Debug($"{ev.Player.Nickname} tried to throw a coin on cooldown.");
                 return;
             }
-            
+
             //set cooldown for player
             _cooldownDict[ev.Player.RawUserId] = DateTime.UtcNow;
-            
+
             //check if coin has registered uses
             if (!CoinUses.ContainsKey(ev.Player.CurrentItem.Serial))
             {
@@ -121,7 +124,7 @@ namespace BetterCoinflips
                     return;
                 }
             }
-            
+
             //decrement coin uses
             CoinUses[ev.Player.CurrentItem.Serial]--;
             Log.Debug($"Uses Left: {CoinUses[ev.Player.CurrentItem.Serial]}");
@@ -133,7 +136,7 @@ namespace BetterCoinflips
             }
 
             Log.Debug($"Is tails: {ev.IsTails}");
-            
+
             if (!ev.IsTails)
             {
                 int totalChance = _goodEffectChances.Values.Sum();
@@ -152,7 +155,7 @@ namespace BetterCoinflips
 
                     randomNum -= kvp.Value;
                 }
-                
+
                 Log.Debug($"headsEvent = {headsEvent}");
 
                 //use headsevent to choose the effect and execute it
@@ -178,7 +181,7 @@ namespace BetterCoinflips
 
                     randomNum -= kvp.Value;
                 }
-                
+
                 Log.Debug($"tailsEvent = {tailsEvent}");
 
                 //use tailsevent to choose the effect and execute it
@@ -202,7 +205,7 @@ namespace BetterCoinflips
                 SendBroadcast(ev.Player, message, true, ev.IsTails);
             }
         }
-        
+
         //removing default coins
         public void OnSpawningItem(SpawningItemEventArgs ev)
         {
@@ -230,6 +233,37 @@ namespace BetterCoinflips
                 ev.IsAllowed = false;
                 Pickup.CreateAndSpawn(ItemType.Coin, ev.Pickup.Position, new Quaternion());
                 Config.ItemToReplace[Config.ItemToReplace.ElementAt(0).Key]--;
+            }
+        }
+        public void OnPlayerSpawned(SpawningEventArgs ev)
+        {
+            if (Config.SizeReductionBehavior == 2 && _respawnCount.ContainsKey(ev.Player.UserId))
+            {
+                if (ev.Player.Scale.y < 1)
+                {
+                    float scaleFactorY = ev.Player.Scale.y + Config.GrowthFrequency;
+                    scaleFactorY = Math.Min(scaleFactorY, 1.0f);
+                    ev.Player.Scale = new Vector3(scaleFactorY, scaleFactorY, scaleFactorY);
+                }
+            }
+        }
+        public void OnPlayerDied(DiedEventArgs ev)
+        {
+            if (Config.SizeReductionBehavior == 0)
+            {
+                ev.Player.Scale = new Vector3(1, 1, 1);
+            }
+            else if (Config.SizeReductionBehavior == 2)
+            {
+                if (ev.Player.Scale.y < 1)
+                {
+                    if (!_respawnCount.ContainsKey(ev.Player.UserId))
+                    {
+                        _respawnCount[ev.Player.UserId] = 0;
+                    }
+
+                    _respawnCount[ev.Player.UserId]++;
+                }
             }
         }
     }
