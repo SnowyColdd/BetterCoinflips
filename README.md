@@ -1,67 +1,71 @@
-# BetterCoinflips
-<a href="https://github.com/Mikihero/BetterCoinflips/releases"><img src="https://img.shields.io/github/downloads/Mikihero/BetterCoinflips/total?label=Downloads" alt="Downloads"></a>  
+# Fork
+Ten plugin jest forkiem [BetterCoinflips](https://github.com/Mikihero/BetterCoinflips) autorstwa [Mikihero](https://github.com/Mikihero) który jest przepisany na Polski oraz zmienia niektóre funkcjonalności.
+
+## BetterCoinflips
   
-SCP:SL plugin that adds a Risk-Reward mechanic to the in-game coin. Whenever you flip a coin a 'random' effect will happen depending on the coinflips outcome.
+Jest to plugin do gry SCP:SL który dodaje nagrode lub antynagrode za rzut monetą w grze. Za każdym razem gdy rzucisz monetą dostaniesz losowy efekt, zależny od wyniku rzutu monetą.
 
-# Features:
+- Plugin testowany na wersji gry **13.6.9**
 
-- Whenever a player flips a coin and it lands on heads one of the following will happen:  
- 1. They will receive a Containment Engineer/Facility Manager keycard.  
- 2. They will recevive a 'medical kit' consisting of a medkit and painkillers.
- 3. They will be teleported to the escape zone doors.  
- 4. They will be healed by 25 health.
- 5. Their hp will be increased by 10%.
- 6. They will get an SCP-268.
- 7. They will receive a random good effect for 5 seconds.
- 8. They will get a Logicer with 1 ammo.  
- 9. They will receive an SCP-2176. 
- 10. They will receive a pink candy. 
- 11. They will receive a revolver with the worst attachments possible. 
- 12. They will get an empty micro hid.
- 13. MTF/CI will respawn immediatly.
- 14. Their scale will be set to 1.3/0.5/1.3.
- 15. They will receive a random item.
+## Cechy pluginu:
 
-- Whenever someone flips a coin and it lands on tails one of the following will happen:  
- 1. Their hp will be reduced by 30%.  
- 2. They will be teleported to Class D cells.  
- 3. They will get a random bad effect for 5 seconds.  
- 4. The Alpha Warhead will be enabled or disabled depending on it's current state.  
- 5. Lights all across the map will be turned off for 10 seconds.  
- 6. A live grenade will appear on their head.
- 7. A live flash grenade will spawn on their head.
- 8. They will be teleported to an SCP if there are any alive, otherwise they'll lose 15 hp.
- 9. They will lose all but 1 hp.
- 10. Thye will receive a primed SCP-244.
- 11. They receive an SCP-173 tantrum.
- 12. A fake CASSIE is sent saying that SCP-173 was killed by a Tesla gate.
- 13. They will be forceclassed to a random SCP.
- 14. Their inventory will be reset.
- 15. Their role will be changed to the opposite one (class d - scientist, mtf - ci etc.)
- 16. An instantly exploding grenade will spawn on their head.
- 17. They will swap places with another player.
- 18. They will be kicked.
- 19. They will be replaced by a random spectator.
- 20. They will be teleported to a random tesla.
- 21. Their inventory will be swapped with another player's inventory.
- 22. They will be teleported to a random room.
- 23. They will be handcuffed and lose their items.
+- Za każdym razem kiedy gracz rzuci monetą jedna z poniższych rzeczy się wydarzy:  
+ 1. Otrzyma kartę technika zapezbieczeń.  
+ 2. Otrzyma 'zestaw medyczny' składający sie z apteczki oraz tabletek na ból.
+ 3. Otrzyma teleport do drzwi strefowych.
+ 4. Otrzyma leczenie na 25HP.
+ 5. Jego HP zostanie zwiększone o 10%.
+ 6. Otrzyma SCP-268.
+ 7. Otrzyma losowy dobry efekt na 5 sekund.
+ 8. Otrzyma Logicer'a z 1 ammo.  
+ 9. Otrzyma SCP-2176. 
+ 10. Otrzyma różowygo cukierka. 
+ 11. Otrzyma rewolwer z najgorszymi dodatkami jakie można mieć. 
+ 12. Otrzyma rozładowanego micro hida.
+ 13. Natychmiastowy respawn MTF/CI will.
+ 14. Otrzyma zmniejszenie postaci do skali 1.3/0.5/1.3.
+ 15. Otrzyma losowy item.
 
-- The plugin will prevent the spawns of a specified amount of coins around the map.
-- The plugin will replace a specified amount of the chosen item (by default SCP-500) with a coin in the SCP pedestals.
-- The plugin will assign a random amount of uses to every thrown coin. This amount can be read or set with a command. If a coin runs out of uses it breaks.
+- Za każdym razem, gdy gracz rzuci monetą i wyląduje na reszce, wydarzy się jedna z poniższych sytuacji:  
+ 1. Jego HP zostanie zmniejszone o 30%.  
+ 2. Zostanie przeteleportowany do cel klas D.  
+ 3. Dostanie losowy zły efekt na 5 sekund.  
+ 4. Głowica Alpha Warhead zostanie włączona lub wyłaczona w zależności od jej aktualnego stanu.  
+ 5. Światła na całej mapie zostaną wyłączone na 10 sekund.  
+ 6. Nad głową pojawi się niezabezpieczony granat.
+ 7. Nad głową pojawi się niezabezpieczony granat błyskowy.
+ 8. Zostanie przeteleportowany do SCP gdy jakiś jest żywy, jeśli nie to straci 15HP.
+ 9. Traci wszystko i zostaje mu 1HP.
+ 10. Dostaje aktywonane SCP-244 pod nogami.
+ 11. Otrzymuje furie SCP-173.
+ 12. Fałszywa cassie wysyła komunikat że SCP-173 zostaje zabite przez tesle.
+ 13. Zostaje zmieniony w losowego SCP.
+ 14. Jego ekwipunek zostaje zresetowany.
+ 15. Jego rola zostaje zmieniona na przeciwną strone (klasa D - naukowiec, MTF - CI itp.)
+ 16. Na jego głowie pojawia się granat który natychmiastowo wybucha.
+ 17. Zostaje zamieniony miejscem z innym graczem.
+ 18. Zostanie wyrzucony z serwera.
+ 19. Zostanie zamieniony z losowym obserwujacym.
+ 20. Zostanie przeteleportowany do losowej tesli.
+ 21. Jego ekwipunek zostanie zamieniony z ekwipunkiem innego gracza.
+ 22. Zostanie przeteleportowany do losowego pomieszczenia.
+ 23. Zostanie skuty i straci swoje itemy.
 
-# Commands
+- Plugin zapobiega pojawieniu się określonej ilości monet na mapie.
+- Plugin zastąpi specyficzną lcizbę wygranych itemów (Domyślnie SCP-500) na monete.
+- Plugin przypisze losową liczbę użyć do każdej rzuconej monety. Kwotę tę można odczytać lub ustawić za pomocą polecenia. Jeśli moneta się skończy, pęknie.
 
-- GetSerial - gets the serial number of an item held by you or another player.
-- CoinUses - gets or sets the number of uses a specific coin has. Example usage: `coinuses get player 5`, `coin uses set player 4`, `coinuses set serial 10` 
+## Komendy
 
-# Permissions
+- GetSerial - Otrzymuje numer seryjny przedmiotu trzymanego przez Ciebie lub innego gracza.
+- CoinUses - Pobiera lub ustawia liczbę zastosowań danej monety.. Przykład użycia: `coinuses get player 5`, `coin uses set player 4`, `coinuses set serial 10` 
 
-- bc.coinuses.set - grants access to the CoinUses Set command
-- bc.coinuses.get - grants access to the CoinUses Get command
+## Permisje
 
-# Default config
+- bc.coinuses.set - daje dostęp do komendy set CoinUses
+- bc.coinuses.get - daje dostęp do komendy get CoinUses
+
+## Domyślny config pluginu
 
 ```yaml
 better_cf:
