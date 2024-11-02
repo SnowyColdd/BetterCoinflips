@@ -14,19 +14,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>$(EXILED_REFERENCES)\Assembly-CSharp-firstpass.dll</HintPath>
+      <HintPath>M:\Dokumenty\kk\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="Mirror">
-      <HintPath>$(EXILED_REFERENCES)\Mirror.dll</HintPath>
+      <HintPath>M:\Dokumenty\kk\Mirror.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>$(EXILED_REFERENCES)\UnityEngine.dll</HintPath>
+      <HintPath>M:\Dokumenty\kk\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>$(EXILED_REFERENCES)\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>M:\Dokumenty\kk\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>$(EXILED_REFERENCES)\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>M:\Dokumenty\kk\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
