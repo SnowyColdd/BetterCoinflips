@@ -143,6 +143,11 @@ namespace BetterCoinflips.Types
             new CoinFlipEffect(Translations.SizeChangeMessage, player =>
             {
                 player.Scale = new Vector3(1.13f, 0.5f, 1.13f);
+                // Reset respawn count when size change effect is applied
+                if (!EventHandlers.RespawnCount.ContainsKey(player.UserId))
+                {
+                    EventHandlers.RespawnCount[player.UserId] = 0;
+                }
             }),
 
             // 14: Spawns a random item for the player.
