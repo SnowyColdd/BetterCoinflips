@@ -12,6 +12,11 @@ namespace BetterCoinflips.Configs
         [Description("The broadcast message when a coin is registered with no uses.")]
         public string CoinNoUsesMessage { get; set; } = "Twoja moneta nie miała żadnych użyć!";
 
+        [Description("Message sent to the user who received a random coin.")]
+        public string RandomCoinMessage { get; set; } = "Otrzymałeś losową monetę!";
+
+        [Description("Message sent to the player when a random coin appears at their feet if there is no space in the inventory.")]
+        public string RandomCoinDropMessage { get; set; } = "Nie masz miejsca w ekwipunku, więc losowa moneta pojawiła się pod twoimi nogami!";
         public List<string> HintMessages { get; set; } = new()
         {
             "Twoja moneta wylądowała na reszce.",
@@ -36,7 +41,6 @@ namespace BetterCoinflips.Configs
         public string ForceRespawnMessage { get; set; } = "Ktoś się zrespił... prawdopodobnie.";
         public string SizeChangeMessage { get; set; } = "Zostałeś zmniejszony.";
         public string RandomItemMessage { get; set; } = "Dostałeś losowy przedmiot!";
-
 
         
         [Description("Here you can set the message for each of these bad coin effects.")]
@@ -74,5 +78,7 @@ namespace BetterCoinflips.Configs
         public string RandomTeleportMessage { get; set; } = "Zostałeś losowo przeteleportowany.";
         public string RandomTeleportWarheadDetonatedMessage { get; set; } = "Głowica została zdetonowana, więc dostałeś tylko cukierka.";
         public string HandcuffMessage { get; set; } = "Zostałeś aresztowany za popełnienie zbrodni... czy coś.";
+        public string TeleportToSpawnMessage { get; set; } = "Wszyscy zostali przeteleportowani na swoje początkowe miejsce respawnu!";
+        public string FakeNtfMessage { get; set; } = "Słyszałeś coś o NTF?";
     }
 }
