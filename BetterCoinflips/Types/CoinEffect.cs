@@ -61,16 +61,16 @@ namespace BetterCoinflips.Types
                 Pickup.CreateAndSpawn(ItemType.Painkillers, player.Position, new Quaternion());
             }),
 
-            // 2: Teleports the player to the escape secondary door.
+            // 2: Teleports the player to the escape primary door.
             new CoinFlipEffect(Translations.TpToEscapeMessage, player =>
             {
-                player.Teleport(Door.Get(DoorType.EscapeSecondary));
+                player.Teleport(Door.Get(DoorType.EscapePrimary));
             }),
 
             // 3: Heals the player by 25 health points.
             new CoinFlipEffect(Translations.MagicHealMessage, player =>
             {
-                player.Heal(25);
+                player.Health = player.MaxHealth;
             }),
 
             // 4: Increases the player's health by 10%.
@@ -157,7 +157,6 @@ namespace BetterCoinflips.Types
             }),
         };
 
-
         // BadEffects list
         public static List<CoinFlipEffect> BadEffects = new()
         {
@@ -192,7 +191,7 @@ namespace BetterCoinflips.Types
                     player.EnableEffect(EffectType.PocketCorroding);
                 else
                     player.EnableEffect(effect, 5, true);
-                
+
                 Log.Debug($"Chosen random effect: {effect}");
             }),
 
@@ -266,7 +265,7 @@ namespace BetterCoinflips.Types
             new CoinFlipEffect(Translations.FakeScpKillMessage, player =>
             {
                 var scpName = _scpNames.ToList().RandomItem();
-                
+
                 Cassie.MessageTranslated($"scp {scpName.Key} successfully terminated by automatic security system",
                     $"{scpName.Value} successfully terminated by Automatic Security System.");
             }),
@@ -276,7 +275,7 @@ namespace BetterCoinflips.Types
             {
                 player.DropItems();
                 player.Scale = new Vector3(1, 1, 1);
-                
+
                 var randomScp = Config.ValidScps.ToList().RandomItem();
                 player.Role.Set(randomScp, RoleSpawnFlags.AssignInventory);
                 
@@ -350,7 +349,7 @@ namespace BetterCoinflips.Types
             {
                 var playerList = Player.List.Where(x => x.IsAlive && !Config.PlayerSwapIgnoredRoles.Contains(x.Role.Type)).ToList();
                 playerList.Remove(player);
-                
+
                 if (playerList.IsEmpty())
                 {
                     return;
@@ -358,10 +357,10 @@ namespace BetterCoinflips.Types
 
                 var targetPlayer = playerList.RandomItem();
                 var pos = targetPlayer.Position;
-                
+
                 targetPlayer.Teleport(player.Position);
                 player.Teleport(pos);
-                
+
                 EventHandlers.SendBroadcast(targetPlayer, Translations.PlayerSwapMessage);
             }),
 
@@ -394,7 +393,6 @@ namespace BetterCoinflips.Types
                 {
                     spect.AddItem(item);
                 }
-                
                 
                 //give spect the players ammo, has to be done before ClearInventory() or else ammo will fall on the floor
                 for (int i = 0; i < player.Ammo.Count; i++)
@@ -489,6 +487,41 @@ namespace BetterCoinflips.Types
             {
                 player.Handcuff();
                 player.DropItems();
+                Timing.CallDelayed(15f, () => player.RemoveHandcuffs());
+            }),
+
+            // 23: Teleports everyone to their initial spawn location
+            new CoinFlipEffect(Translations.TeleportToSpawnMessage, player =>
+            {
+                foreach (var p in Player.List)
+                {
+                    if (p.Role.Type == RoleTypeId.Scp079) continue;
+
+                    if (EventHandlers.InitialSpawnPositions.TryGetValue(p.UserId, out Vector3 spawnPos))
+                    {
+                        p.Teleport(spawnPos);
+                    }
+                }
+            }),
+
+            // 24: Broadcasts a fake NTF spawn message
+            new CoinFlipEffect(Translations.FakeNtfMessage, player =>
+            {
+                int scpCount = Player.Get(Side.Scp).Count();
+                string message;
+
+                if (scpCount > 0)
+                {
+                    message = $"mtfunit epsilon 11 designated nato_e 11 1 hasentered allremaining awaitingrecontainment {scpCount} scpsubject";
+                    if (scpCount > 1)
+                        message += "s";
+                }
+                else
+                {
+                    message = "mtfunit epsilon 11 designated nato_e 11 1 hasentered allremaining awaitingrecontainment substantial threat to safety remains within the facility exercise caution";
+                }
+
+                Cassie.Message(message, true, true);
             }),
         };
     }
