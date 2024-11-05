@@ -20,20 +20,20 @@ namespace BetterCoinflips.Configs
         [Description("The ItemType of the item to be replaced with a coin and the amount to be replaced, the item is supposed to be something found in SCP pedestals.")]
         public Dictionary<ItemType, int> ItemToReplace { get; set; } = new()
         {
-            { ItemType.SCP500, 2 }
+            { ItemType.SCP500, 1 }
         };
 
         [Description("The boundaries of the random range of throws each coin will have before it breaks. The upper bound is exclusive.")]
         public List<int> MinMaxDefaultCoins { get; set; } = new()
         {
-            1, 
+            2, 
             4
         };
 
         [Description("Time in seconds between coin toses. Default: 5")]
         public double CoinCooldown { get; set; } = 5;
 
-        [Description("The duration of the broadcast informing you about your 'reward'. Default: 3")]
+        [Description("The duration of the broadcast informing you about your 'reward'. Default: 5")]
         public ushort BroadcastTime { get; set; } = 5;
         
         [Description("The duration of the hint telling you if you got heads or tails. Set to 0 or less to disable.")]
@@ -48,8 +48,10 @@ namespace BetterCoinflips.Configs
         [Description("Determines the behavior of size reduction: 0 - Until first death, 1 - Persistent until end of game, 2 - Growing with each respawn. Default: 0")]
         public int SizeReductionBehavior { get; set; } = 0;
 
-        [Description("Częstotliwość wzrostu gracza, gdy jest mały. Domyślnie: 0.2")]
+        [Description("The frequency of growth when it is small. Default: 0.2")]
         public float GrowthFrequency { get; set; } = 0.2f;
+        [Description("Time in minutes how often a random player will receive a coin. Set 0 to disable. Default: 0")]
+        public int RandomCoinInterval { get; set; } = 0;
 
         [Description("List of bad effects that can be applied to the players. List available at: https://exiled-team.github.io/EXILED/api/Exiled.API.Enums.EffectType.html")]
         public HashSet<EffectType> BadEffects { get; set; } = new()
@@ -90,7 +92,6 @@ namespace BetterCoinflips.Configs
             EffectType.Scp1853,
             EffectType.Scp207,
             EffectType.Vitality,
-            EffectType.SeveredHands
         };
 
         [Description("The % chance of receiving a Facility Manager keycard instead of a Containment Engineer one.")]
@@ -171,7 +172,6 @@ namespace BetterCoinflips.Configs
         {
             RoomType.EzCafeteria,
             RoomType.EzCheckpointHallway,
-            RoomType.EzCollapsedTunnel,
             RoomType.EzConference,
             RoomType.EzCrossing,
             RoomType.EzCurve,
@@ -225,8 +225,8 @@ namespace BetterCoinflips.Configs
         [Description("The chance of these good effects happening. It's a proportional chance not a % chance.")]
         public int KeycardChance { get; set; } = 20;
         public int MedicalKitChance { get; set; } = 30;
-        public int TpToEscapeChance { get; set; } = 15;
-        public int HealChance { get; set; } = 10;
+        public int TpToEscapeChance { get; set; } = 5;
+        public int HealChance { get; set; } = 20;
         public int MoreHpChance { get; set; } = 20;
         public int HatChance { get; set; } = 10;
         public int RandomGoodEffectChance { get; set; } = 30;
@@ -261,7 +261,9 @@ namespace BetterCoinflips.Configs
         public int SpectSwapChance { get; set; } = 10;
         public int TeslaTpChance { get; set; } = 10;
         public int InventorySwapChance { get; set; } = 20;
-        public int HandcuffChance { get; set; } = 5;
+        public int HandcuffChance { get; set; } = 15;
         public int RandomTeleportChance { get; set; } = 15;
+        public int TeleportToSpawnChance { get; set; } = 5;
+        public int FakeNtfChance { get; set;} = 5;
     }
 }
