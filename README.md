@@ -1,3 +1,5 @@
+<a href="https://github.com/snowycoldd/BetterCoinflips/releases"><img src="https://img.shields.io/github/downloads/snowycoldd/BetterCoinflips/total?label=Downloads" alt="Downloads"></a>  
+
 # Fork
 Ten plugin jest forkiem [BetterCoinflips](https://github.com/Mikihero/BetterCoinflips) autorstwa [Mikihero](https://github.com/Mikihero) który jest przepisany na Polski oraz zmienia niektóre funkcjonalności.
 
@@ -52,7 +54,7 @@ Jest to plugin do gry SCP:SL który dodaje nagrode lub antynagrode za rzut monet
  23. Zostanie skuty i straci swoje itemy.
 
 - Plugin zapobiega pojawieniu się określonej ilości monet na mapie.
-- Plugin zastąpi specyficzną lcizbę wygranych itemów (Domyślnie SCP-500) na monete.
+- Plugin zastąpi specyficzną liczbę wygranych itemów (Domyślnie SCP-500) na monete.
 - Plugin przypisze losową liczbę użyć do każdej rzuconej monety. Kwotę tę można odczytać lub ustawić za pomocą polecenia. Jeśli moneta się skończy, pęknie.
 
 ## Komendy
@@ -77,19 +79,25 @@ better_cf:
   default_coins_amount: 4
   # The ItemType of the item to be replaced with a coin and the amount to be replaced, the item is supposed to be something found in SCP pedestals.
   item_to_replace:
-    SCP500: 2
+    SCP500: 1
   # The boundaries of the random range of throws each coin will have before it breaks. The upper bound is exclusive.
   min_max_default_coins:
-  - 1
+  - 2
   - 4
-  # Time in seconds between coin toses.
+  # Time in seconds between coin toses. Default: 5
   coin_cooldown: 5
-  # The duration of the broadcast informing you about your 'reward'. Default: 3
-  broadcast_time: 3
+  # The duration of the broadcast informing you about your 'reward'. Default: 5
+  broadcast_time: 5
   # The duration of the map blackout. Default: 10
   map_blackout_time: 10
   # The fuse time of the grenade falling on your head. Default: 3.25
   live_grenade_fuse_time: 3.25
+  # Determines the behavior of size reduction: 0 - Until first death, 1 - Persistent until end of game, 2 - Growing with each respawn. Default: 0
+  size_reduction_behavior: 0
+  # The frequency of growth when it is small. Default: 0.2
+  growth_frequency: 0.2
+  # Time in minutes how often a random player will receive a coin. Set 0 to disable. Default: 0
+  random_coin_interval: 0
   # List of bad effects that can be applied to the players. List available at: https://exiled-team.github.io/EXILED/api/Exiled.API.Enums.EffectType.html
   bad_effects:
   - Asphyxiated
@@ -128,45 +136,47 @@ better_cf:
   # The % chance of receiving a Facility Manager keycard instead of a Containment Engineer one.
   red_card_chance: 15
   # The kick reason.
-  kick_reason: 'The coin kicked your ass.'
+  kick_reason: 'Moneta postanowiła wywalić cię z serwera.'
   # The chance of these good effects happening. It's a proportional chance not a % chance.
   keycard_chance: 20
-  medical_kit_chance: 35
+  medical_kit_chance: 30
   tp_to_escape_chance: 5
-  heal_chance: 10
-  more_hp_chance: 10
+  heal_chance: 20
+  more_hp_chance: 20
   hat_chance: 10
   random_good_effect_chance: 30
-  one_ammo_logicer_chance: 1
+  one_ammo_logicer_chance: 5
   lightbulb_chance: 15
-  pink_candy_chance: 10
+  pink_candy_chance: 20
   bad_revo_chance: 5
-  empty_hid_chance: 5
+  empty_hid_chance: 1
   force_respawn_chance: 15
   size_change_chance: 20
+  random_item_chance: 35
   # The chance of these bad effects happening. It's a proportional chance not a % chance.
   hp_reduction_chance: 20
   tp_to_class_d_cells_chance: 5
-  random_bad_effect_chance: 20
+  random_bad_effect_chance: 25
   warhead_chance: 10
-  lights_out_chance: 20
+  lights_out_chance: 15
   live_he_chance: 30
-  troll_gun_chance: 50
-  troll_flash_chance: 50
-  scp_tp_chance: 20
-  one_hp_left_chance: 15
+  troll_flash_chance: 35
+  scp_tp_chance: 10
+  one_hp_left_chance: 10
   primed_vase_chance: 20
   shit_pants_chance: 40
-  fake_cassie_chance: 50
-  turn_into_scp_chance: 30
-  inventory_reset_chance: 20
-  class_swap_chance: 10
-  instant_explosion_chance: 10
-  player_swap_chance: 20
+  fake_cassie_chance: 20
+  turn_into_scp_chance: 10
+  inventory_reset_chance: 10
+  class_swap_chance: 20
+  instant_explosion_chance: 15
+  player_swap_chance: 25
   kick_chance: 5
   spect_swap_chance: 10
-  tesla_tp_chance: 15
+  tesla_tp_chance: 10
   inventory_swap_chance: 20
-  handcuff_chance: 10
+  handcuff_chance: 15
   random_teleport_chance: 15
+  teleport_to_spawn_chance: 5
+  fakentfchance: 5
 ```
