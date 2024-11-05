@@ -1,7 +1,7 @@
 <a href="https://github.com/snowycoldd/BetterCoinflips/releases"><img src="https://img.shields.io/github/downloads/snowycoldd/BetterCoinflips/total?label=Downloads" alt="Downloads"></a>  
 
 # Fork
-Ten plugin jest forkiem [BetterCoinflips](https://github.com/Mikihero/BetterCoinflips) autorstwa [Mikihero](https://github.com/Mikihero) który jest przepisany na Polski oraz zmienia niektóre funkcjonalności.
+Ten plugin jest forkiem [BetterCoinflips](https://github.com/Mikihero/BetterCoinflips) autorstwa [Mikihero](https://github.com/Mikihero) który jest przepisany na Polski oraz posiada usprawnienia.
 
 ## BetterCoinflips
   
@@ -24,7 +24,7 @@ Jest to plugin do gry SCP:SL który dodaje nagrode lub antynagrode za rzut monet
  10. Otrzyma różowygo cukierka. 
  11. Otrzyma rewolwer z najgorszymi dodatkami jakie można mieć. 
  12. Otrzyma rozładowanego micro hida.
- 13. Natychmiastowy respawn MTF/CI will.
+ 13. Natychmiastowy respawn MTF/CI.
  14. Otrzyma zmniejszenie postaci do skali 1.3/0.5/1.3.
  15. Otrzyma losowy item.
 
