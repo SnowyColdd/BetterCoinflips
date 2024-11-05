@@ -8,6 +8,7 @@ using Exiled.API.Features.Pickups;
 using Exiled.Events.EventArgs.Map;
 using Exiled.Events.EventArgs.Player;
 using UnityEngine;
+using MEC;
 
 namespace BetterCoinflips
 {
@@ -19,6 +20,7 @@ namespace BetterCoinflips
 
         private readonly Dictionary<string, int> _respawnCount = new();
         public static Dictionary<string, int> RespawnCount = new();
+        public static readonly Dictionary<string, Vector3> InitialSpawnPositions = new();
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Global
         public static Dictionary<ushort, int> CoinUses = new();
@@ -69,6 +71,8 @@ namespace BetterCoinflips
             { 20, Config.InventorySwapChance },
             { 21, Config.RandomTeleportChance },
             { 22, Config.HandcuffChance },
+            { 23, Config.TeleportToSpawnChance },
+            { 24, Config.FakeNtfChance },
         };
 
         private readonly Dictionary<string, DateTime> _cooldownDict = new();
@@ -76,7 +80,7 @@ namespace BetterCoinflips
         //helper method
         public static void SendBroadcast(Player pl, string message, bool showHint = false, bool isTails = false)
         {
-            pl.Broadcast(new Exiled.API.Features.Broadcast(message, Config.BroadcastTime), true);
+            pl.Broadcast(new Exiled.API.Features.Broadcast($"<color=#008000><b>{message}</b></color>", Config.BroadcastTime), true);
 
             if (showHint && Config.HintDuration > 0)
             {
@@ -246,6 +250,8 @@ namespace BetterCoinflips
                     ev.Player.Scale = new Vector3(scaleFactorY, scaleFactorY, scaleFactorY);
                 }
             }
+
+            InitialSpawnPositions[ev.Player.UserId] = ev.Position;
         }
         public void OnPlayerDied(DiedEventArgs ev)
         {
@@ -264,6 +270,41 @@ namespace BetterCoinflips
 
                     _respawnCount[ev.Player.UserId]++;
                 }
+            }
+        }
+        public EventHandlers()
+        {
+            if (Config.RandomCoinInterval > 0)
+            {
+                Timing.RunCoroutine(RandomCoinRoutine());
+            }
+        }
+        private IEnumerator<float> RandomCoinRoutine()
+        {
+            while (true)
+            {
+                yield return Timing.WaitForSeconds(Config.RandomCoinInterval * 60);
+                GiveRandomCoin();
+            }
+        }
+        public void GiveRandomCoin()
+        {
+            if (Config.RandomCoinInterval <= 0) return;
+
+            var eligiblePlayers = Player.List.Where(p => !p.IsScp && p.IsAlive).ToList();
+            if (!eligiblePlayers.Any()) return;
+
+            var randomPlayer = eligiblePlayers[UnityEngine.Random.Range(0, eligiblePlayers.Count)];
+
+            if (randomPlayer.Items.Count() < 8)
+            {
+                randomPlayer.AddItem(ItemType.Coin);
+                SendBroadcast(randomPlayer, Translations.RandomCoinMessage);
+            }
+            else
+            {
+                Pickup.CreateAndSpawn(ItemType.Coin, randomPlayer.Position, Quaternion.identity);
+                SendBroadcast(randomPlayer, Translations.RandomCoinDropMessage);
             }
         }
     }
