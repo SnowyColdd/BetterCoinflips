@@ -238,6 +238,9 @@ namespace BetterCoinflips.Configs
         public int ForceRespawnChance { get; set; } = 15;
         public int SizeChangeChance { get; set; } = 20;
         public int RandomItemChance { get; set; } = 35;
+        public int AmmoRefillChance{ get; set; } = 25;
+        public int TemporaryGodmodeChance { get; set; } = 5;
+        public int KeycardUpgradeChance { get;set; } = 20;
 
         [Description("The chance of these bad effects happening. It's a proportional chance not a % chance.")]
         public int HpReductionChance { get; set; } = 20;
