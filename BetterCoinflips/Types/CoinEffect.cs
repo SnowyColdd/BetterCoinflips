@@ -51,14 +51,25 @@ namespace BetterCoinflips.Types
             // 0: Spawns a red keycard or containment enginner
             new CoinFlipEffect(flag1 ? Translations.RedCardMessage : Translations.ContainmentEngineerCardMessage, player =>
             {
-                Pickup.CreateAndSpawn(flag1 ? ItemType.KeycardFacilityManager : ItemType.KeycardContainmentEngineer, player.Position, new Quaternion());
+                if (player.Items.Count() < 8)
+                    player.AddItem(flag1 ? ItemType.KeycardFacilityManager : ItemType.KeycardContainmentEngineer);
+                else
+                    Pickup.CreateAndSpawn(flag1 ? ItemType.KeycardFacilityManager : ItemType.KeycardContainmentEngineer, player.Position, new Quaternion());
             }),
 
             // 1: Spawns a medkit and painkillers for the player.
             new CoinFlipEffect(Translations.MediKitMessage, player =>
             {
-                Pickup.CreateAndSpawn(ItemType.Medkit, player.Position, new Quaternion());
-                Pickup.CreateAndSpawn(ItemType.Painkillers, player.Position, new Quaternion());
+                if (player.Items.Count() < 7)
+                {
+                    player.AddItem(ItemType.Medkit);
+                    player.AddItem(ItemType.Painkillers);
+                }
+                else
+                {
+                    Pickup.CreateAndSpawn(ItemType.Medkit, player.Position, new Quaternion());
+                    Pickup.CreateAndSpawn(ItemType.Painkillers, player.Position, new Quaternion());
+                }
             }),
 
             // 2: Teleports the player to the escape primary door.
@@ -82,7 +93,10 @@ namespace BetterCoinflips.Types
             // 5: Spawns SCP-268 (Neat Hat) for the player.
             new CoinFlipEffect(Translations.NeatHatMessage, player =>
             {
-                Pickup.CreateAndSpawn(ItemType.SCP268, player.Position, new Quaternion());
+                if (player.Items.Count < 8)
+                    player.AddItem(ItemType.SCP268);
+                else
+                    Pickup.CreateAndSpawn(ItemType.SCP268, player.Position, new Quaternion());
             }),
 
             // 6: Applies a random good effect to the player.
@@ -96,32 +110,63 @@ namespace BetterCoinflips.Types
             // 7: Spawns a Logicer with one ammo for the player.
             new CoinFlipEffect(Translations.OneAmmoLogicerMessage, player =>
             {
-                Firearm gun = (Firearm)Item.Create(ItemType.GunLogicer);
-                gun.Ammo = 1;
-                gun.CreatePickup(player.Position);
+                if (player.Items.Count() < 8)
+                {
+                    Firearm gun = (Firearm)Item.Create(ItemType.GunLogicer);
+                    gun.Ammo = 1;
+                    player.AddItem(gun);
+                }
+                else
+                {
+                    Firearm gun = (Firearm)Item.Create(ItemType.GunLogicer);
+                    gun.Ammo = 1;
+                    gun.CreatePickup(player.Position);
+                }
             }),
 
             // 8: Spawns SCP-2176 (lightbulb) for the player.
             new CoinFlipEffect(Translations.LightbulbMessage, player =>
             {
-                Pickup.CreateAndSpawn(ItemType.SCP2176, player.Position, new Quaternion());
+                if (player.Items.Count() < 8)
+                    player.AddItem(ItemType.SCP2176);
+                else
+                    Pickup.CreateAndSpawn(ItemType.SCP2176, player.Position, new Quaternion());
             }),
 
             // 9: Spawns pink candy (SCP-330) for the player.
             new CoinFlipEffect(Translations.PinkCandyMessage, player =>
             {
-                Scp330 candy = (Scp330)Item.Create(ItemType.SCP330);
-                candy.AddCandy(InventorySystem.Items.Usables.Scp330.CandyKindID.Pink);
-                candy.CreatePickup(player.Position);
+                if (player.Items.Count() < 8)
+                {
+                    Scp330 candy = (Scp330)Item.Create(ItemType.SCP330);
+                    candy.AddCandy(InventorySystem.Items.Usables.Scp330.CandyKindID.Pink);
+                    player.AddItem(candy);
+                }
+                else
+                {
+                    Scp330 candy = (Scp330)Item.Create(ItemType.SCP330);
+                    candy.AddCandy(InventorySystem.Items.Usables.Scp330.CandyKindID.Pink);
+                    candy.CreatePickup(player.Position);
+                }
             }),
 
             // 10: Spawns a customized revolver with attachments for the player.
             new CoinFlipEffect(Translations.BadRevoMessage, player =>
             {
-                Firearm revo = (Firearm)Item.Create(ItemType.GunRevolver);
-                revo.AddAttachment(new[]
-                    {AttachmentName.CylinderMag8, AttachmentName.ShortBarrel, AttachmentName.ScopeSight});
-                revo.CreatePickup(player.Position);
+                if (player.Items.Count() < 8)
+                {
+                    Firearm revo = (Firearm)Item.Create(ItemType.GunRevolver);
+                    revo.AddAttachment(new[]
+                        {AttachmentName.CylinderMag8, AttachmentName.ShortBarrel, AttachmentName.ScopeSight});
+                    player.AddItem(revo);
+                }
+                else
+                {
+                    Firearm revo = (Firearm)Item.Create(ItemType.GunRevolver);
+                    revo.AddAttachment(new[]
+                        {AttachmentName.CylinderMag8, AttachmentName.ShortBarrel, AttachmentName.ScopeSight});
+                    revo.CreatePickup(player.Position);
+                }
             }),
 
             // 11: Spawns a MicroHID with no energy for the player.
@@ -153,7 +198,115 @@ namespace BetterCoinflips.Types
             // 14: Spawns a random item for the player.
             new CoinFlipEffect(Translations.RandomItemMessage, player =>
             {
-                Item.Create(Config.ItemsToGive.ToList().RandomItem()).CreatePickup(player.Position);
+                var randomItem = Config.ItemsToGive.ToList().RandomItem();
+                if (player.Items.Count() < 8)
+                    player.AddItem(randomItem);
+                else
+                    Item.Create(Config.ItemsToGive.ToList().RandomItem()).CreatePickup(player.Position);
+            }),
+
+            // 15: Refills all ammo and charges MicroHID
+            new CoinFlipEffect(Translations.AmmoRefillMessage, player =>
+            {
+                Dictionary<ItemType, Dictionary<AmmoType, ushort>> armorAmmoLimits = new()
+                {
+                    {
+                        ItemType.None,
+                        new Dictionary<AmmoType, ushort>
+                        {
+                            { AmmoType.Nato9, 40 },
+                            { AmmoType.Nato556, 40 },
+                            { AmmoType.Nato762, 40 },
+                            { AmmoType.Ammo12Gauge, 8 },
+                            { AmmoType.Ammo44Cal, 8 }
+                        }
+                    },
+                    {
+                        ItemType.ArmorLight,
+                        new Dictionary<AmmoType, ushort>
+                        {
+                            { AmmoType.Nato9, 70 },
+                            { AmmoType.Nato556, 40 },
+                            { AmmoType.Nato762, 40 },
+                            { AmmoType.Ammo12Gauge, 14 },
+                            { AmmoType.Ammo44Cal, 18 }
+                        }
+                    },
+                    {
+                        ItemType.ArmorCombat,
+                        new Dictionary<AmmoType, ushort>
+                        {
+                            { AmmoType.Nato9, 170 },
+                            { AmmoType.Nato556, 120 },
+                            { AmmoType.Nato762, 120 },
+                            { AmmoType.Ammo12Gauge, 54 },
+                            { AmmoType.Ammo44Cal, 48 }
+                        }
+                    },
+                    {
+                        ItemType.ArmorHeavy,
+                        new Dictionary<AmmoType, ushort>
+                        {
+                            { AmmoType.Nato9, 210 },
+                            { AmmoType.Nato556, 200 },
+                            { AmmoType.Nato762, 200 },
+                            { AmmoType.Ammo12Gauge, 74 },
+                            { AmmoType.Ammo44Cal, 68 }
+                        }
+                    }
+                };
+
+                var armors = player.Items.Count(x => x.Type == ItemType.ArmorLight || x.Type == ItemType.ArmorCombat || x.Type == ItemType.ArmorHeavy);
+                var ammoLimits = armors > 1 ? armorAmmoLimits[ItemType.None] : armorAmmoLimits[player.Items.FirstOrDefault(x => x.Type == ItemType.ArmorLight || x.Type == ItemType.ArmorCombat || x.Type == ItemType.ArmorHeavy)?.Type ?? ItemType.None];
+
+                foreach (var ammoLimit in ammoLimits)
+                {
+                    player.SetAmmo(ammoLimit.Key, ammoLimit.Value);
+                }
+
+                foreach (var item in player.Items)
+                {
+                    if (item is MicroHid microHid)
+                    {
+                        microHid.Energy = 100;
+                    }
+                }
+            }),
+
+            // 16: Gives temporary godmode
+            new CoinFlipEffect(Translations.TemporaryGodmodeMessage, player =>
+            {
+                player.IsGodModeEnabled = true;
+                Timing.CallDelayed(5f, () => player.IsGodModeEnabled = false);
+            }),
+
+            // 17: upgrade keycard in inventory
+            new CoinFlipEffect(Translations.KeycardUpgradedMessage, player =>
+            {
+                var keycards = player.Items.Where(item => item.Type.ToString().Contains("Keycard")).ToList();
+
+                if (!keycards.Any())
+                {
+                    EventHandlers.SendBroadcast(player, Translations.NoKeycardMessage);
+                    return;
+                }
+
+                var cardToUpgrade = keycards.Count == 1 ? keycards.First() : keycards[Rd.Next(keycards.Count)];
+
+                ItemType newCard = cardToUpgrade.Type switch
+                {
+                    ItemType.KeycardJanitor => ItemType.KeycardScientist,
+                    ItemType.KeycardScientist => ItemType.KeycardResearchCoordinator,
+                    ItemType.KeycardResearchCoordinator => ItemType.KeycardFacilityManager,
+                    ItemType.KeycardGuard => ItemType.KeycardMTFOperative,
+                    ItemType.KeycardMTFOperative => ItemType.KeycardMTFCaptain,
+                    ItemType.KeycardContainmentEngineer => ItemType.KeycardFacilityManager,
+                    ItemType.KeycardMTFCaptain => ItemType.KeycardO5,
+                    _ => ItemType.KeycardO5
+                };
+
+                player.RemoveItem(cardToUpgrade);
+                player.AddItem(newCard);
             }),
         };
 
@@ -515,10 +668,11 @@ namespace BetterCoinflips.Types
                     message = $"mtfunit epsilon 11 designated nato_e 11 1 hasentered allremaining awaitingrecontainment {scpCount} scpsubject";
                     if (scpCount > 1)
                         message += "s";
+                    message += " contaiment zone";
                 }
                 else
                 {
-                    message = "mtfunit epsilon 11 designated nato_e 11 1 hasentered allremaining awaitingrecontainment substantial threat to safety remains within the facility exercise caution";
+                    message = "mtfunit epsilon 11 designated nato_e 11 1 hasentered allremaining noscpsleft";
                 }
 
                 Cassie.Message(message, true, true);
