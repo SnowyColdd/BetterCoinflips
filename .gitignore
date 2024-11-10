@@ -4,6 +4,5 @@ obj/
 packages.config
 .idea/
 .vs/
-*.sln.DotSettings.*
 packages/
 BetterCoinflips/BetterCoinflips.csproj
