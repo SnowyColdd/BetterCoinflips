@@ -26,7 +26,7 @@ namespace BetterCoinflips.Configs
         [Description("Here you can set the message for each of these good coin effects.")]
         public string TossOnCooldownMessage { get; set; } = "Nie możesz jeszcze rzucić monetą.";
         public string RedCardMessage { get; set; } = "Otrzymujesz kartę admininstatora placówki!";
-        public string ContainmentEngineerCardMessage { get; set; } = "Otrzymujesz kartę technika zapezbieczeń!";
+        public string ContainmentEngineerCardMessage { get; set; } = "Otrzymujesz kartę technika zabezbieczeń!";
         public string MediKitMessage { get; set; } = "Otrzymałeś zestaw medyczny!";
         public string TpToEscapeMessage { get; set; } = "Teraz możesz uciec! Tego przecież chciałeś prawda?";
         public string MagicHealMessage { get; set; } = "Zostałeś magicznie uleczony!";
@@ -41,8 +41,11 @@ namespace BetterCoinflips.Configs
         public string ForceRespawnMessage { get; set; } = "Ktoś się zrespił... prawdopodobnie.";
         public string SizeChangeMessage { get; set; } = "Zostałeś zmniejszony.";
         public string RandomItemMessage { get; set; } = "Dostałeś losowy przedmiot!";
+        public string AmmoRefillMessage { get; set; } = "Twoja amunicja została odnowiowa!";
+        public string TemporaryGodmodeMessage { get; set; } = "Jesteś nieśmiertelny przez 5 sekund!";
+        public string KeycardUpgradedMessage { get; set; } = "Twoja karta została ulepszona!";
+        public string NoKeycardMessage { get; set; } = "Nie masz przy sobie żadnej karty do ulepszenia!";
 
-        
         [Description("Here you can set the message for each of these bad coin effects.")]
         public string HpReductionMessage { get; set; } = "Twoje HP zostało zmniejszone o 30%.";
         public string TpToClassDCellsMessage { get; set; } = "Zostałeś przeteleportowany do cel klas D.";
@@ -77,7 +80,7 @@ namespace BetterCoinflips.Configs
         public string InventorySwapOnePlayerMessage { get; set; } = "Nie możesz się z nikim zamienić, więc tracisz zdrowie.";
         public string RandomTeleportMessage { get; set; } = "Zostałeś losowo przeteleportowany.";
         public string RandomTeleportWarheadDetonatedMessage { get; set; } = "Głowica została zdetonowana, więc dostałeś tylko cukierka.";
-        public string HandcuffMessage { get; set; } = "Zostałeś aresztowany za popełnienie zbrodni... czy coś.";
+        public string HandcuffMessage { get; set; } = "Zostałeś aresztowany za popełnienie zbrodni... czy coś. (15s)";
         public string TeleportToSpawnMessage { get; set; } = "Wszyscy zostali przeteleportowani na swoje początkowe miejsce respawnu!";
         public string FakeNtfMessage { get; set; } = "Słyszałeś coś o NTF?";
     }
