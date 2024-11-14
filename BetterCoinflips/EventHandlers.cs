@@ -28,24 +28,23 @@ namespace BetterCoinflips
         //Dict of all good coin effect chances with an index
         private readonly Dictionary<int, int> _goodEffectChances = new()
         {
-            { 0, Config.KeycardChance },
+            { 0, Config.RandomCardChance },
             { 1, Config.MedicalKitChance },
             { 2, Config.TpToEscapeChance },
             { 3, Config.HealChance },
             { 4, Config.MoreHpChance },
-            { 5, Config.HatChance },
+            { 5, Config.RandomsScpItemChance },
             { 6, Config.RandomGoodEffectChance },
             { 7, Config.OneAmmoLogicerChance },
-            { 8, Config.LightbulbChance },
-            { 9, Config.PinkCandyChance },
-            { 10, Config.BadRevoChance },
-            { 11, Config.EmptyHidChance },
-            { 12, Config.ForceRespawnChance },
-            { 13, Config.SizeChangeChance },
-            { 14, Config.RandomItemChance },
-            { 15, Config.AmmoRefillChance },
-            { 16, Config.TemporaryGodmodeChance },
-            { 17, Config.KeycardUpgradeChance },
+            { 8, Config.PinkCandyChance },
+            { 9, Config.BadRevoChance },
+            { 10, Config.SpawnHidChance },
+            { 11, Config.ForceRespawnChance },
+            { 12, Config.SizeChangeChance },
+            { 13, Config.RandomItemChance },
+            { 14, Config.AmmoRefillChance },
+            { 15, Config.TemporaryGodmodeChance },
+            { 16, Config.KeycardUpgradeChance },
         };
 
         //Dict of all bad coin effect chances with an index
@@ -76,6 +75,8 @@ namespace BetterCoinflips
             { 22, Config.HandcuffChance },
             { 23, Config.TeleportToSpawnChance },
             { 24, Config.FakeNtfChance },
+            { 25, Config.LightZoneDecontaminationChance },
+            { 26, Config.RandomTeleportChance },
         };
 
         private readonly Dictionary<string, DateTime> _cooldownDict = new();
