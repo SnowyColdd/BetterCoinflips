@@ -5,7 +5,6 @@ using BetterCoinflips.Configs;
 using Exiled.API.Enums;
 using Exiled.API.Extensions;
 using Exiled.API.Features;
-using Exiled.API.Features.DamageHandlers;
 using Exiled.API.Features.Doors;
 using Exiled.API.Features.Items;
 using Exiled.API.Features.Pickups;
@@ -42,19 +41,24 @@ namespace BetterCoinflips.Types
             { "0 4 9", "SCP-049"},
             { "1 0 6", "SCP-106"}
         };
-        
-        private static bool flag1 = Config.RedCardChance > Rd.Next(1, 101);
 
         // GoodEffects list
         public static List<CoinFlipEffect> GoodEffects = new()
         {
-            // 0: Spawns a red keycard or containment enginner
-            new CoinFlipEffect(flag1 ? Translations.RedCardMessage : Translations.ContainmentEngineerCardMessage, player =>
+            // 0: Gives player a random card
+            new CoinFlipEffect(Translations.RandomCardMessage, player =>
             {
+                ItemType[] keycards = {
+                ItemType.KeycardJanitor, ItemType.KeycardScientist, ItemType.KeycardResearchCoordinator,
+                ItemType.KeycardFacilityManager, ItemType.KeycardGuard, ItemType.KeycardMTFOperative,
+                ItemType.KeycardMTFCaptain, ItemType.KeycardContainmentEngineer, ItemType.KeycardChaosInsurgency,
+                ItemType.KeycardZoneManager, ItemType.KeycardMTFPrivate, ItemType.KeycardO5 };
+                ItemType randomKeycard = keycards[Rd.Next(keycards.Length)];
+
                 if (player.Items.Count() < 8)
-                    player.AddItem(flag1 ? ItemType.KeycardFacilityManager : ItemType.KeycardContainmentEngineer);
+                    player.AddItem(randomKeycard);
                 else
-                    Pickup.CreateAndSpawn(flag1 ? ItemType.KeycardFacilityManager : ItemType.KeycardContainmentEngineer, player.Position, new Quaternion());
+                    Pickup.CreateAndSpawn(randomKeycard, player.Position, new Quaternion());
             }),
 
             // 1: Spawns a medkit and painkillers for the player.
@@ -90,13 +94,16 @@ namespace BetterCoinflips.Types
                 player.Health *= 1.1f;
             }),
 
-            // 5: Spawns SCP-268 (Neat Hat) for the player.
-            new CoinFlipEffect(Translations.NeatHatMessage, player =>
+            // 5: Spawns random SCP item for the player.
+            new CoinFlipEffect(Translations.RandomsScpItem, player =>
             {
+                ItemType[] scpItems = { ItemType.SCP018, ItemType.SCP207, ItemType.AntiSCP207, ItemType.SCP268, ItemType.SCP500, ItemType.SCP330, ItemType.SCP1853, ItemType.SCP1576, ItemType.SCP244a, ItemType.SCP244b };
+                ItemType randomScpItem = scpItems[Rd.Next(scpItems.Length)];
+
                 if (player.Items.Count < 8)
-                    player.AddItem(ItemType.SCP268);
+                    player.AddItem(randomScpItem);
                 else
-                    Pickup.CreateAndSpawn(ItemType.SCP268, player.Position, new Quaternion());
+                    Pickup.CreateAndSpawn(randomScpItem, player.Position, new Quaternion());
             }),
 
             // 6: Applies a random good effect to the player.
@@ -124,16 +131,7 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 8: Spawns SCP-2176 (lightbulb) for the player.
-            new CoinFlipEffect(Translations.LightbulbMessage, player =>
-            {
-                if (player.Items.Count() < 8)
-                    player.AddItem(ItemType.SCP2176);
-                else
-                    Pickup.CreateAndSpawn(ItemType.SCP2176, player.Position, new Quaternion());
-            }),
-
-            // 9: Spawns pink candy (SCP-330) for the player.
+            // 8: Spawns pink candy (SCP-330) for the player.
             new CoinFlipEffect(Translations.PinkCandyMessage, player =>
             {
                 if (player.Items.Count() < 8)
@@ -150,7 +148,7 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 10: Spawns a customized revolver with attachments for the player.
+            // 9: Spawns a customized revolver with attachments for the player.
             new CoinFlipEffect(Translations.BadRevoMessage, player =>
             {
                 if (player.Items.Count() < 8)
@@ -169,22 +167,22 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 11: Spawns a MicroHID with no energy for the player.
-            new CoinFlipEffect(Translations.EmptyHidMessage, player =>
+            // 10: Spawns a MicroHID for the player.
+            new CoinFlipEffect(Translations.SpawnHidMessage, player =>
             {
                 MicroHIDPickup item = (MicroHIDPickup)Pickup.Create(ItemType.MicroHID);
                 item.Position = player.Position;
                 item.Spawn();
-                item.Energy = 0;
+                item.Energy = 100;
             }),
 
-            // 12: Forces a respawn wave of the team that has more ticketes
+            // 11: Forces a respawn wave of the team that has more ticketes
             new CoinFlipEffect(Translations.ForceRespawnMessage, player =>
             {
                 Respawn.ForceWave(Respawn.NextKnownTeam == SpawnableTeamType.NineTailedFox ? SpawnableTeamType.NineTailedFox : SpawnableTeamType.ChaosInsurgency, true);
             }),
 
-            // 13: Changes the player's size
+            // 12: Changes the player's size
             new CoinFlipEffect(Translations.SizeChangeMessage, player =>
             {
                 player.Scale = new Vector3(1.13f, 0.5f, 1.13f);
@@ -195,7 +193,7 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 14: Spawns a random item for the player.
+            // 13: Spawns a random item for the player.
             new CoinFlipEffect(Translations.RandomItemMessage, player =>
             {
                 var randomItem = Config.ItemsToGive.ToList().RandomItem();
@@ -205,7 +203,7 @@ namespace BetterCoinflips.Types
                     Item.Create(Config.ItemsToGive.ToList().RandomItem()).CreatePickup(player.Position);
             }),
 
-            // 15: Refills all ammo and charges MicroHID
+            // 14: Refills all ammo and charges MicroHID
             new CoinFlipEffect(Translations.AmmoRefillMessage, player =>
             {
                 Dictionary<ItemType, Dictionary<AmmoType, ushort>> armorAmmoLimits = new()
@@ -273,14 +271,14 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 16: Gives temporary godmode
+            // 15: Gives temporary godmode
             new CoinFlipEffect(Translations.TemporaryGodmodeMessage, player =>
             {
                 player.IsGodModeEnabled = true;
                 Timing.CallDelayed(5f, () => player.IsGodModeEnabled = false);
             }),
 
-            // 17: upgrade keycard in inventory
+            // 16: upgrade keycard in inventory
             new CoinFlipEffect(Translations.KeycardUpgradedMessage, player =>
             {
                 var keycards = player.Items.Where(item => item.Type.ToString().Contains("Keycard")).ToList();
@@ -661,21 +659,71 @@ namespace BetterCoinflips.Types
             new CoinFlipEffect(Translations.FakeNtfMessage, player =>
             {
                 int scpCount = Player.Get(Side.Scp).Count();
+                var natoDesignations = new Dictionary<string, string>
+                {
+                    { "November", "NATO_N" },
+                    { "Bravo", "NATO_B" },
+                    { "Charlie", "NATO_C" },
+                    { "Delta", "NATO_D" },
+                    { "Echo", "NATO_E" },
+                    { "India", "NATO_I" },
+                    { "Juliett", "NATO_J" },
+                    { "Papa", "NATO_P" }
+                };
+                var randomNato = natoDesignations.ElementAt(Rd.Next(natoDesignations.Count));
+                string natoName = randomNato.Key;
+                string natoCode = randomNato.Value;
+                int randomNumber = Rd.Next(3, 18);
                 string message;
+                string displayMessage;
 
                 if (scpCount > 0)
                 {
-                    message = $"mtfunit epsilon 11 designated nato_e 11 1 hasentered allremaining awaitingrecontainment {scpCount} scpsubject";
-                    if (scpCount > 1)
-                        message += "s";
-                    message += " contaiment zone";
+                    message = $"mtfunit epsilon 11 designated {natoCode} {randomNumber} hasentered allremaining awaitingrecontainment {scpCount} scpsubject";
+                    displayMessage = $"Mobile Task Force Unit, Epsilon-11, designated {natoName}-{randomNumber} has entered the facility. All remaining personnel are advised to proceed with standard evacuation protocols until an MTF squad reaches your destination. Awaiting re-containment of: {scpCount} SCP subject(s).";
                 }
                 else
                 {
-                    message = "mtfunit epsilon 11 designated nato_e 11 1 hasentered allremaining noscpsleft";
+                    message = $"mtfunit epsilon 11 designated {natoCode} {randomNumber} hasentered allremaining noscpsleft";
+                    displayMessage = $"Mobile Task Force Unit, Epsilon-11, designated {natoName}-{randomNumber} has entered the facility. All remaining personnel are advised to proceed with standard evacuation protocols until an MTF squad reaches your destination. Substantial threat to safety remains within the facility -- exercise caution.";
                 }
 
-                Cassie.Message(message, true, true);
+                Cassie.MessageTranslated(message, displayMessage);
+            }),
+
+            // 25: Applies decontamination effect to all players in the Light zone for 5 seconds.
+            new CoinFlipEffect(Translations.LightZoneDecontaminationMessage, player =>
+            {
+                foreach (var p in Player.List)
+                {
+                    if (p.CurrentRoom.Zone == ZoneType.LightContainment)
+                    {
+                        p.EnableEffect(EffectType.Decontaminating, 5, true);
+                    }
+                }
+                Map.Broadcast(5, Translations.LightZoneDecontaminationMessage);
+            }),
+
+            // 26: Randomly teleports the player throughout the facility every 5 seconds for 20 seconds.
+            new CoinFlipEffect(Translations.RandomTeleportationMessage, player =>
+            {
+                int teleportsRemaining = 4;
+
+                void TeleportPlayer()
+                {
+                    if (teleportsRemaining > 0 && player.IsAlive)
+                    {
+                        player.Teleport(Room.Get(Config.RoomsToTeleport.GetRandomValue()));
+                        teleportsRemaining--;
+
+                        if (teleportsRemaining > 0)
+                        {
+                            Timing.CallDelayed(5f, TeleportPlayer);
+                        }
+                    }
+                }
+
+                TeleportPlayer();
             }),
         };
     }
