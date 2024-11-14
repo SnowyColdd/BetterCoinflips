@@ -223,18 +223,17 @@ namespace BetterCoinflips.Configs
         };
 
         [Description("The chance of these good effects happening. It's a proportional chance not a % chance.")]
-        public int KeycardChance { get; set; } = 20;
+        public int RandomCardChance { get; set; } = 15;
         public int MedicalKitChance { get; set; } = 30;
         public int TpToEscapeChance { get; set; } = 5;
         public int HealChance { get; set; } = 20;
         public int MoreHpChance { get; set; } = 20;
-        public int HatChance { get; set; } = 10;
+        public int RandomsScpItemChance { get; set; } = 15;
         public int RandomGoodEffectChance { get; set; } = 30;
         public int OneAmmoLogicerChance { get; set; } = 5;
-        public int LightbulbChance { get; set; } = 15;
         public int PinkCandyChance { get; set; } = 20;
         public int BadRevoChance { get; set; } = 5;
-        public int EmptyHidChance { get; set; } = 1;
+        public int SpawnHidChance { get; set; } = 1;
         public int ForceRespawnChance { get; set; } = 15;
         public int SizeChangeChance { get; set; } = 20;
         public int RandomItemChance { get; set; } = 35;
@@ -255,7 +254,7 @@ namespace BetterCoinflips.Configs
         public int PrimedVaseChance { get; set; } = 20;
         public int ShitPantsChance { get; set; } = 40;
         public int FakeCassieChance { get; set; } = 20;
-        public int TurnIntoScpChance { get; set; } = 10;
+        public int TurnIntoScpChance { get; set; } = 5;
         public int InventoryResetChance { get; set; } = 10;
         public int ClassSwapChance { get; set; } = 20;
         public int InstantExplosionChance { get; set; } = 15;
@@ -268,5 +267,7 @@ namespace BetterCoinflips.Configs
         public int RandomTeleportChance { get; set; } = 15;
         public int TeleportToSpawnChance { get; set; } = 5;
         public int FakeNtfChance { get; set;} = 5;
+        public int LightZoneDecontaminationChance {  get; set; } = 10;
+        public int RandomTeleportationChance { get; set; } = 15;
     }
 }
