@@ -7,7 +7,7 @@ namespace BetterCoinflips.Configs
     public class Translations : ITranslation
     {
         [Description("This is added to the effect message if the coin breaks.")]
-        public string CoinBreaksMessage { get; set; } = "\nTwoja moneta zużyła się zbyt mocno i się rozpadła.";
+        public string CoinBreaksMessage { get; set; } = "\nTwoja moneta się zużyła i się rozpadła.";
         
         [Description("The broadcast message when a coin is registered with no uses.")]
         public string CoinNoUsesMessage { get; set; } = "Twoja moneta nie miała żadnych użyć!";
@@ -25,22 +25,20 @@ namespace BetterCoinflips.Configs
         
         [Description("Here you can set the message for each of these good coin effects.")]
         public string TossOnCooldownMessage { get; set; } = "Nie możesz jeszcze rzucić monetą.";
-        public string RedCardMessage { get; set; } = "Otrzymujesz kartę admininstatora placówki!";
-        public string ContainmentEngineerCardMessage { get; set; } = "Otrzymujesz kartę technika zabezbieczeń!";
+        public string RandomCardMessage { get; set; } = "Otrzymałeś losową kartę dostępu!";
         public string MediKitMessage { get; set; } = "Otrzymałeś zestaw medyczny!";
         public string TpToEscapeMessage { get; set; } = "Teraz możesz uciec! Tego przecież chciałeś prawda?";
         public string MagicHealMessage { get; set; } = "Zostałeś magicznie uleczony!";
         public string HealthIncreaseMessage { get; set; } = "Otrzymałeś 10% więcej HP!";
-        public string NeatHatMessage { get; set; } = "Dostałeś kapelusz!";
+        public string RandomsScpItem { get; set; } = "Dostałeś losowy przedmiot SCP!";
         public string RandomGoodEffectMessage { get; set; } = "Otrzymałeś losowy efekt.";
-        public string OneAmmoLogicerMessage { get; set; } = "Dostałeś broń.";
-        public string LightbulbMessage { get; set; } = "Dostałeś błyszczącą żarówkę!";
+        public string OneAmmoLogicerMessage { get; set; } = "Logicer wylądował w twoim ekwipunku!";
         public string PinkCandyMessage { get; set; } = "Dostałeś ładnego cukierka!";
-        public string BadRevoMessage { get; set; } = "Co to za obominacja!?";
-        public string EmptyHidMessage { get; set; } = "Czy właśnie dostałeś MICRO HIDA!?";
+        public string BadRevoMessage { get; set; } = "Czy to rewolwer?";
+        public string SpawnHidMessage { get; set; } = "Czy właśnie dostałeś MICRO HIDA!?";
         public string ForceRespawnMessage { get; set; } = "Ktoś się zrespił... prawdopodobnie.";
         public string SizeChangeMessage { get; set; } = "Zostałeś zmniejszony.";
-        public string RandomItemMessage { get; set; } = "Dostałeś losowy przedmiot!";
+        public string RandomItemMessage { get; set; } = "Otrzymałeś losowy przedmiot!";
         public string AmmoRefillMessage { get; set; } = "Twoja amunicja została odnowiowa!";
         public string TemporaryGodmodeMessage { get; set; } = "Jesteś nieśmiertelny przez 5 sekund!";
         public string KeycardUpgradedMessage { get; set; } = "Twoja karta została ulepszona!";
@@ -50,18 +48,22 @@ namespace BetterCoinflips.Configs
         public string HpReductionMessage { get; set; } = "Twoje HP zostało zmniejszone o 30%.";
         public string TpToClassDCellsMessage { get; set; } = "Zostałeś przeteleportowany do cel klas D.";
         public string TpToClassDCellsAfterWarheadMessage { get; set; } = "Zostałeś przeteleportowany do strefy radioaktywnej.";
-        public string RandomBadEffectMessage { get; set; } = "Dostałeś losowy efekt.";
+        public string RandomBadEffectMessage { get; set; } = "Otrzymałeś losowy efekt.";
         public string WarheadStopMessage { get; set; } = "Głowica została zatrzymana.";
-        public string WarheadStartMessage { get; set; } = "Głowica została uruchomiona.";
-        public string LightsOutMessage { get; set; } = "Niech się stanie ciemność!";
+        public string WarheadStartMessage { get; set; } = "Głowica została uruchomiona.";        
+        public string RandomTeleportMessage { get; set; } = "Zostałeś losowo przeteleportowany.";
+        public string InventorySwapOnePlayerMessage { get; set; } = "Nie możesz się z nikim zamienić, więc tracisz zdrowie.";       
+        public string HandcuffMessage { get; set; } = "Zostałeś aresztowany za popełnienie zbrodni... czy coś. (15s)";        
+        public string RandomTeleportWarheadDetonatedMessage { get; set; } = "Głowica została zdetonowana, więc dostałeś tylko cukierka.";
+        public string LightsOutMessage { get; set; } = "Boisz się ciemności?";
         public string LiveGrenadeMessage { get; set; } = "Uważaj na głowe!";
         public string TrollFlashMessage { get; set; } = "słyszałeś coś?";
-        public string TpToRandomScpMessage { get; set; } = "Zostałeś przeteleportowany do SCP.";
+        public string TpToRandomScpMessage { get; set; } = "Zostałeś przeteleportowany do losowego SCP.";
         public string SmallDamageMessage { get; set; } = "Straciłeś 15 HP.";
         public string HugeDamageMessage { get; set; } = "Straciłeś dużo HP";
         public string PrimedVaseMessage { get; set; } = "Nie za zimno?";
         public string ShitPantsMessage { get; set; } = "Właśnie się zesrałeś...";
-        public string FakeScpKillMessage { get; set; } = "Czy właśnie zabiłeś SCP?!";
+        public string FakeScpKillMessage { get; set; } = "Chyba właśnie zabiłeś SCP.";
         public string TurnIntoScpMessage { get; set; } = "Zostałeś zamieniony w SCP!";
         public string InventoryResetMessage { get; set; } = "Straciłeś swoje rzeczy.";
         public string ClassSwapMessage { get; set; } = "To się nazywa karta UNO reverse!";
@@ -69,19 +71,17 @@ namespace BetterCoinflips.Configs
         public string PlayerSwapMessage { get; set; } = "Twoja pozycja została zamieniona z innym graczem.";
         public string PlayerSwapIfOneAliveMessage { get; set; } = "Miałeś się zamienić z kimś miejscami, ale nikt inny nie żyje!";
         public string KickMessage { get; set; } = "Do widzenia!";
-        public string SpectSwapPlayerMessage { get; set; } = "Właśnie poprawiłeś komuś runde!";
+        public string SpectSwapPlayerMessage { get; set; } = "Zamieniłeś się rolą z obserwatorem!";
         public string SpectSwapSpectMessage { get; set; } = "Zostałeś wybrany jako losowy obserwator, aby zastąpić tego gracza!";
         public string SpectSwapNoSpectsMessage { get; set; } = "Miałeś szczęście, bo nie ma obserwatorów, którzy mogliby cię zastąpić";
-        public string TeslaTpMessage { get; set; } = "Lubisz prąd?";
+        public string TeslaTpMessage { get; set; } = "Jesteś może elektrykiem?";
         public string TeslaTpAfterWarheadMessage { get; set; } = "Zostałeś przeteleportowany do strefy radioaktywnej.";
+        public string FakeNtfMessage { get; set; } = "Podobno NTF wchodzi do placówki.";
+        public string RandomTeleportationMessage { get; set; } = "Będziesz losowo teleportowany przez następne 20 sekund!"; 
         
         [Description("This message will be broadcast to both players.")]
         public string InventorySwapMessage { get; set; } = "Twój ekwipunek został zmieniony z losowym graczem.";
-        public string InventorySwapOnePlayerMessage { get; set; } = "Nie możesz się z nikim zamienić, więc tracisz zdrowie.";
-        public string RandomTeleportMessage { get; set; } = "Zostałeś losowo przeteleportowany.";
-        public string RandomTeleportWarheadDetonatedMessage { get; set; } = "Głowica została zdetonowana, więc dostałeś tylko cukierka.";
-        public string HandcuffMessage { get; set; } = "Zostałeś aresztowany za popełnienie zbrodni... czy coś. (15s)";
         public string TeleportToSpawnMessage { get; set; } = "Wszyscy zostali przeteleportowani na swoje początkowe miejsce respawnu!";
-        public string FakeNtfMessage { get; set; } = "Słyszałeś coś o NTF?";
+        public string LightZoneDecontaminationMessage { get; set; } = "Dekontaminacja strefy Light na 5 sekund.";
     }
 }
