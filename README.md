@@ -7,26 +7,28 @@ Ten plugin jest forkiem [BetterCoinflips](https://github.com/Mikihero/BetterCoin
   
 Jest to plugin do gry SCP:SL który dodaje nagrode lub antynagrode za rzut monetą w grze. Za każdym razem gdy rzucisz monetą dostaniesz losowy efekt, zależny od wyniku rzutu monetą.
 
-- Plugin testowany na wersji gry **13.6.9**
+- Plugin testowany na wersji gry **13.5.1**
 
 ## Cechy pluginu:
 
 - Za każdym razem kiedy gracz rzuci monetą jedna z poniższych rzeczy się wydarzy:  
- 1. Otrzyma kartę technika zapezbieczeń.  
+ 1. Otrzyma losową kartę dostępu.  
  2. Otrzyma 'zestaw medyczny' składający sie z apteczki oraz tabletek na ból.
  3. Otrzyma teleport do drzwi strefowych.
- 4. Otrzyma leczenie na 25HP.
+ 4. Otrzyma pełne leczenie.
  5. Jego HP zostanie zwiększone o 10%.
- 6. Otrzyma SCP-268.
+ 6. Otrzyma losowy item SCP.
  7. Otrzyma losowy dobry efekt na 5 sekund.
- 8. Otrzyma Logicer'a z 1 ammo.  
- 9. Otrzyma SCP-2176. 
- 10. Otrzyma różowygo cukierka. 
- 11. Otrzyma rewolwer z najgorszymi dodatkami jakie można mieć. 
- 12. Otrzyma rozładowanego micro hida.
- 13. Natychmiastowy respawn MTF/CI.
- 14. Otrzyma zmniejszenie postaci do skali 1.3/0.5/1.3.
- 15. Otrzyma losowy item.
+ 8. Otrzyma Logicer'a z 1 ammo.   
+ 9. Otrzyma różowego cukierka. 
+ 10. Otrzyma rewolwer z najgorszymi dodatkami jakie można mieć. 
+ 11. Otrzyma naładowanego micro hida.
+ 12. Natychmiastowy respawn MTF/CI.
+ 13. Otrzyma zmniejszenie postaci do skali 1.3/0.5/1.3.
+ 14. Otrzyma losowy item.
+ 15. Otrzyma tymczasową nieśmiertelność na 5 sekund.
+ 16. Jego karta dostępu zostanie ulepszona do wyższego poziomu.
+ 17. Cała jego amunicja zostanie uzupełniona.
 
 - Za każdym razem, gdy gracz rzuci monetą i wyląduje na reszce, wydarzy się jedna z poniższych sytuacji:  
  1. Jego HP zostanie zmniejszone o 30%.  
@@ -40,7 +42,7 @@ Jest to plugin do gry SCP:SL który dodaje nagrode lub antynagrode za rzut monet
  9. Traci wszystko i zostaje mu 1HP.
  10. Dostaje aktywonane SCP-244 pod nogami.
  11. Otrzymuje furie SCP-173.
- 12. Fałszywa cassie wysyła komunikat że SCP-173 zostaje zabite przez tesle.
+ 12. Fałszywa cassie wysyła komunikat że SCP zostaje zabite przez tesle.
  13. Zostaje zmieniony w losowego SCP.
  14. Jego ekwipunek zostaje zresetowany.
  15. Jego rola zostaje zmieniona na przeciwną strone (klasa D - naukowiec, MTF - CI itp.)
@@ -52,6 +54,9 @@ Jest to plugin do gry SCP:SL który dodaje nagrode lub antynagrode za rzut monet
  21. Jego ekwipunek zostanie zamieniony z ekwipunkiem innego gracza.
  22. Zostanie przeteleportowany do losowego pomieszczenia.
  23. Zostanie skuty i straci swoje itemy.
+ 24. Fałszywy komunikat o przybyciu MTF.
+ 25. Wszyscy gracze w strefie lekkiej otrzymają efekt dekontaminacji.
+ 26. Będzie losowo teleportowany po mapie co 5 sekund przez 20 sekund.
 
 - Plugin zapobiega pojawieniu się określonej ilości monet na mapie.
 - Plugin zastąpi specyficzną liczbę wygranych itemów (Domyślnie SCP-500) na monete.
@@ -88,6 +93,8 @@ better_cf:
   coin_cooldown: 5
   # The duration of the broadcast informing you about your 'reward'. Default: 5
   broadcast_time: 5
+  # The duration of the hint telling you if you got heads or tails. Set to 0 or less to disable.
+  hint_time: 5
   # The duration of the map blackout. Default: 10
   map_blackout_time: 10
   # The fuse time of the grenade falling on your head. Default: 3.25
@@ -138,21 +145,24 @@ better_cf:
   # The kick reason.
   kick_reason: 'Moneta postanowiła wywalić cię z serwera.'
   # The chance of these good effects happening. It's a proportional chance not a % chance.
-  keycard_chance: 20
+  random_card_chance: 15
   medical_kit_chance: 30
   tp_to_escape_chance: 5
   heal_chance: 20
   more_hp_chance: 20
-  hat_chance: 10
+  random_scp_item_chance: 15
   random_good_effect_chance: 30
   one_ammo_logicer_chance: 5
-  lightbulb_chance: 15
   pink_candy_chance: 20
   bad_revo_chance: 5
-  empty_hid_chance: 1
+  spawn_hid_chance: 1
   force_respawn_chance: 15
   size_change_chance: 20
   random_item_chance: 35
+  ammo_refill_chance: 25
+  temporary_godmode_chance: 5 
+  keycard_upgrade_chance: 20
+
   # The chance of these bad effects happening. It's a proportional chance not a % chance.
   hp_reduction_chance: 20
   tp_to_class_d_cells_chance: 5
@@ -166,7 +176,7 @@ better_cf:
   primed_vase_chance: 20
   shit_pants_chance: 40
   fake_cassie_chance: 20
-  turn_into_scp_chance: 10
+  turn_into_scp_chance: 5
   inventory_reset_chance: 10
   class_swap_chance: 20
   instant_explosion_chance: 15
@@ -178,5 +188,7 @@ better_cf:
   handcuff_chance: 15
   random_teleport_chance: 15
   teleport_to_spawn_chance: 5
-  fakentfchance: 5
+  fake_ntf_chance: 5
+  light_zone_decontamination_chance: 10
+  random_teleportation_chance: 15
 ```
