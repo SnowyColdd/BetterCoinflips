@@ -12,20 +12,20 @@ using MEC;
 
 namespace BetterCoinflips
 {
+    /// <summary>
+    /// Handles various game events related to coin flips and player interactions.
+    /// </summary>
     public class EventHandlers
     {
         private static Config Config => Plugin.Instance.Config;
         private static Configs.Translations Translations => Plugin.Instance.Translation;
         private readonly System.Random _rd = new();
-
         private readonly Dictionary<string, int> _respawnCount = new();
         public static Dictionary<string, int> RespawnCount = new();
         public static readonly Dictionary<string, Vector3> InitialSpawnPositions = new();
+        public static readonly Dictionary<ushort, int> CoinUses = new();
 
-        // ReSharper disable once FieldCanBeMadeReadOnly.Global
-        public static Dictionary<ushort, int> CoinUses = new();
-
-        //Dict of all good coin effect chances with an index
+        // Dictionary of all good coin effect chances with an index
         private readonly Dictionary<int, int> _goodEffectChances = new()
         {
             { 0, Config.RandomCardChance },
@@ -45,9 +45,13 @@ namespace BetterCoinflips
             { 14, Config.AmmoRefillChance },
             { 15, Config.TemporaryGodmodeChance },
             { 16, Config.KeycardUpgradeChance },
+            { 17, Config.AllPositiveEffectsChance },
+            { 18, Config.RandomHpChance },
+            { 19, Config.ThousandHpChance },
+            { 20, Config.RandomGeneratorActivationChance },
         };
 
-        //Dict of all bad coin effect chances with an index
+        // Dictionary of all bad coin effect chances with an index
         private readonly Dictionary<int, int> _badEffectChances = new()
         {
             { 0, Config.HpReductionChance },
@@ -76,12 +80,22 @@ namespace BetterCoinflips
             { 23, Config.TeleportToSpawnChance },
             { 24, Config.FakeNtfChance },
             { 25, Config.LightZoneDecontaminationChance },
-            { 26, Config.RandomTeleportChance },
+            { 26, Config.RandomTeleportationChance },
+            { 27, Config.UpsideDownScaleChance },
+            { 28, Config.ZoneDoorLockChance },
+            { 29, Config.RandomItemDropChance },
+            { 30, Config.WalkingTimeBombChance },
         };
 
         private readonly Dictionary<string, DateTime> _cooldownDict = new();
 
-        //helper method
+        /// <summary>
+        /// Sends a broadcast message to the specified player.
+        /// </summary>
+        /// <param name="pl">The player to send the message to.</param>
+        /// <param name="message">The message to send.</param>
+        /// <param name="showHint">Whether to show a hint to the player.</param>
+        /// <param name="isTails">Indicates if the message is related to a tails event.</param>
         public static void SendBroadcast(Player pl, string message, bool showHint = false, bool isTails = false)
         {
             pl.Broadcast(new Exiled.API.Features.Broadcast($"<color=#008000><b>{message}</b></color>", Config.BroadcastTime), true);
@@ -92,14 +106,18 @@ namespace BetterCoinflips
             }
         }
 
-        //main plugin logic
+        /// <summary>
+        /// Handles the coin flip event and applies the appropriate effect based on the result.
+        /// </summary>
+        /// <param name="ev">The event arguments for the coin flip</param>
         public void OnCoinFlip(FlippingCoinEventArgs ev)
         {
-            //broadcast message
+            // Broadcast message
             string message = "";
-            //used to remove the coin if uses run out, since they are checked before executing the effect
+            // Used to remove the coin if uses run out, since they are checked before executing the effect
             bool helper = false;
-            //check if player is on cooldown
+
+            // Check if player is on cooldown
             bool flag = _cooldownDict.ContainsKey(ev.Player.RawUserId)
                         && (DateTime.UtcNow - _cooldownDict[ev.Player.RawUserId]).TotalSeconds < Config.CoinCooldown;
             if (flag)
@@ -110,15 +128,16 @@ namespace BetterCoinflips
                 return;
             }
 
-            //set cooldown for player
+            // Set cooldown for player
             _cooldownDict[ev.Player.RawUserId] = DateTime.UtcNow;
 
-            //check if coin has registered uses
+            // Check if coin has registered uses
             if (!CoinUses.ContainsKey(ev.Player.CurrentItem.Serial))
             {
                 CoinUses.Add(ev.Player.CurrentItem.Serial, _rd.Next(Config.MinMaxDefaultCoins[0], Config.MinMaxDefaultCoins[1]));
                 Log.Debug($"Registered a coin, Uses Left: {CoinUses[ev.Player.CurrentItem.Serial]}");
-                //check if the newly registered coin has no uses
+                
+                // Check if the newly registered coin has no uses
                 if (CoinUses[ev.Player.CurrentItem.Serial] < 1)
                 {
                     //remove the coin from the uses list
@@ -133,11 +152,11 @@ namespace BetterCoinflips
                 }
             }
 
-            //decrement coin uses
+            // Decrement coin uses
             CoinUses[ev.Player.CurrentItem.Serial]--;
             Log.Debug($"Uses Left: {CoinUses[ev.Player.CurrentItem.Serial]}");
 
-            //check if uses that were already registered have been set to 0 to remove the coin after executing the effect
+            // Check if uses that were already registered have been set to 0 to remove the coin after executing the effect
             if (CoinUses[ev.Player.CurrentItem.Serial] < 1)
             {
                 helper = true;
@@ -149,10 +168,9 @@ namespace BetterCoinflips
             {
                 int totalChance = _goodEffectChances.Values.Sum();
                 int randomNum = _rd.Next(1, totalChance + 1);
-                // Set a default value for headsEvent
                 int headsEvent = 2;
 
-                //magic loop to determine headsevent, takes into account chances for each item in the enumerated Dict
+                // Determine heads event
                 foreach (KeyValuePair<int, int> kvp in _goodEffectChances)
                 {
                     if (randomNum <= kvp.Value)
@@ -166,19 +184,18 @@ namespace BetterCoinflips
 
                 Log.Debug($"headsEvent = {headsEvent}");
 
-                //use headsevent to choose the effect and execute it
+                // Execute the effect
                 var effect = CoinFlipEffect.GoodEffects[headsEvent];
                 effect.Execute(ev.Player);
                 message = effect.Message;
             }
-            if (ev.IsTails)
+            else
             {
                 int totalChance = _badEffectChances.Values.Sum();
                 int randomNum = _rd.Next(1, totalChance + 1);
-                // Set a default value for headsEvent
                 int tailsEvent = 13;
 
-                //magic loop to determine headsevent, takes into account chances for each item in the enumerated Dict
+                // Detarmine tails event
                 foreach (KeyValuePair<int, int> kvp in _badEffectChances)
                 {
                     if (randomNum <= kvp.Value)
@@ -192,13 +209,13 @@ namespace BetterCoinflips
 
                 Log.Debug($"tailsEvent = {tailsEvent}");
 
-                //use tailsevent to choose the effect and execute it
+                // Execute the effect
                 var effect = CoinFlipEffect.BadEffects[tailsEvent];
                 effect.Execute(ev.Player);
                 message = effect.Message;
             }
 
-            //if the coin has 0 uses remove it
+            // If the coin has 0 uses remove it
             if (helper)
             {
                 if (ev.Player.CurrentItem != null)
@@ -208,13 +225,16 @@ namespace BetterCoinflips
                 message += Translations.CoinBreaksMessage;
             }
 
-            if (message != null)
+            if (!string.IsNullOrEmpty(message))
             {
                 SendBroadcast(ev.Player, message, true, ev.IsTails);
             }
         }
 
-        //removing default coins
+        /// <summary>
+        /// Handles the item spawning event to remove default coins.
+        /// </summary>
+        /// <param name="ev">The event arguments for item spawning.</param>
         public void OnSpawningItem(SpawningItemEventArgs ev)
         {
             if (Config.DefaultCoinsAmount != 0 && ev.Pickup.Type == ItemType.Coin)
@@ -225,7 +245,10 @@ namespace BetterCoinflips
             }
         }
 
-        //removing locker spawning coins and replacing the chosen item in SCP pedestals
+        /// <summary>
+        /// Handles the locker filling event to remove or replace coins.
+        /// </summary>
+        /// <param name="ev">The event arguments for locker filling.</param>
         public void OnFillingLocker(FillingLockerEventArgs ev)
         {
             if (ev.Pickup.Type == ItemType.Coin && Config.DefaultCoinsAmount != 0)
@@ -243,6 +266,11 @@ namespace BetterCoinflips
                 Config.ItemToReplace[Config.ItemToReplace.ElementAt(0).Key]--;
             }
         }
+
+        /// <summary>
+        /// Handles the player spawn event to adjust player size and track initial positions.
+        /// </summary>
+        /// <param name="ev">The event arguments for player spawning.</param>
         public void OnPlayerSpawned(SpawningEventArgs ev)
         {
             if (Config.SizeReductionBehavior == 2 && _respawnCount.ContainsKey(ev.Player.UserId))
@@ -257,6 +285,11 @@ namespace BetterCoinflips
 
             InitialSpawnPositions[ev.Player.UserId] = ev.Position;
         }
+
+        /// <summary>
+        /// Handles the player death event to reset or adjust player size and trigger effects.
+        /// </summary>
+        /// <param name="ev">The event arguments for player death.</param>
         public void OnPlayerDied(DiedEventArgs ev)
         {
             if (Config.SizeReductionBehavior == 0)
@@ -276,6 +309,10 @@ namespace BetterCoinflips
                 }
             }
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EventHandlers"/> class.
+        /// </summary>
         public EventHandlers()
         {
             if (Config.RandomCoinInterval > 0)
@@ -283,6 +320,11 @@ namespace BetterCoinflips
                 Timing.RunCoroutine(RandomCoinRoutine());
             }
         }
+
+        /// <summary>
+        /// Coroutine that periodically gives a random player a coin.
+        /// </summary>
+        /// <returns>An enumerator for the coroutine.</returns>
         private IEnumerator<float> RandomCoinRoutine()
         {
             while (true)
@@ -291,6 +333,10 @@ namespace BetterCoinflips
                 GiveRandomCoin();
             }
         }
+
+        /// <summary>
+        /// Gives a random player a coin if they are eligible.
+        /// </summary>
         public void GiveRandomCoin()
         {
             if (Config.RandomCoinInterval <= 0) return;
