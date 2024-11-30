@@ -33,13 +33,13 @@ namespace BetterCoinflips.Configs
         [Description("Time in seconds between coin toses. Default: 5")]
         public double CoinCooldown { get; set; } = 5;
 
-        [Description("The duration of the broadcast informing you about your 'reward'. Default: 5")]
+        [Description("The duration in seconds of the broadcast informing you about your 'reward'. Default: 5")]
         public ushort BroadcastTime { get; set; } = 5;
         
-        [Description("The duration of the hint telling you if you got heads or tails. Set to 0 or less to disable.")]
+        [Description("The duration in seconds of the hint telling you if you got heads or tails. Set to 0 or less to disable.")]
         public float HintDuration { get; set; } = 5;
 
-        [Description("The duration of the map blackout. Default: 10")]
+        [Description("The duration in seconds of the map blackout. Default: 10")]
         public float MapBlackoutTime { get; set; } = 10;
 
         [Description("The fuse time of the grenade falling on your head. Default: 3.25")]
@@ -50,8 +50,12 @@ namespace BetterCoinflips.Configs
 
         [Description("The frequency of growth when it is small. Default: 0.2")]
         public float GrowthFrequency { get; set; } = 0.2f;
+
         [Description("Time in minutes how often a random player will receive a coin. Set 0 to disable. Default: 0")]
         public int RandomCoinInterval { get; set; } = 0;
+
+        [Description("Duration in seconds for which the player will have 1000 HP. Default: 15")]
+        public int ThousandHpDuration { get; set; } = 15;
 
         [Description("List of bad effects that can be applied to the players. List available at: https://exiled-team.github.io/EXILED/api/Exiled.API.Enums.EffectType.html")]
         public HashSet<EffectType> BadEffects { get; set; } = new()
@@ -64,7 +68,6 @@ namespace BetterCoinflips.Configs
             EffectType.Corroding,
             EffectType.CardiacArrest,
             EffectType.Deafened,
-            EffectType.Decontaminating,
             EffectType.Disabled,
             EffectType.Ensnared,
             EffectType.Exhausted,
@@ -73,7 +76,6 @@ namespace BetterCoinflips.Configs
             EffectType.Hypothermia,
             EffectType.InsufficientLighting,
             EffectType.Poisoned,
-            EffectType.PocketCorroding,
             EffectType.SeveredHands,
             EffectType.SinkHole,
             EffectType.Stained,
@@ -89,9 +91,10 @@ namespace BetterCoinflips.Configs
             EffectType.Invisible,
             EffectType.MovementBoost,
             EffectType.RainbowTaste,
-            EffectType.Scp1853,
             EffectType.Scp207,
             EffectType.Vitality,
+            EffectType.Ghostly,
+            EffectType.SilentWalk,
         };
 
         [Description("The % chance of receiving a Facility Manager keycard instead of a Containment Engineer one.")]
@@ -240,6 +243,10 @@ namespace BetterCoinflips.Configs
         public int AmmoRefillChance{ get; set; } = 25;
         public int TemporaryGodmodeChance { get; set; } = 5;
         public int KeycardUpgradeChance { get;set; } = 20;
+        public int AllPositiveEffectsChance { get; set; } = 5;
+        public int RandomHpChance { get; set; } = 15;
+        public int ThousandHpChance { get; set; } = 15;
+        public int RandomGeneratorActivationChance { get; set; } = 20;
 
         [Description("The chance of these bad effects happening. It's a proportional chance not a % chance.")]
         public int HpReductionChance { get; set; } = 20;
@@ -269,5 +276,9 @@ namespace BetterCoinflips.Configs
         public int FakeNtfChance { get; set;} = 5;
         public int LightZoneDecontaminationChance {  get; set; } = 10;
         public int RandomTeleportationChance { get; set; } = 15;
+        public int UpsideDownScaleChance { get; set; } = 20;
+        public int ZoneDoorLockChance { get; set; } = 15;
+        public int RandomItemDropChance { get; set; } = 15;
+        public int WalkingTimeBombChance { get; set; } = 20;
     }
 }
