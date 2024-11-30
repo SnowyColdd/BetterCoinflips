@@ -20,7 +20,7 @@ namespace BetterCoinflips.Configs
         public List<string> HintMessages { get; set; } = new()
         {
             "Twoja moneta wylądowała na reszce.",
-            "Twoja moneta wylądowałą na orzełku."
+            "Twoja moneta wylądowała na orzełku."
         };
         
         [Description("Here you can set the message for each of these good coin effects.")]
@@ -43,6 +43,10 @@ namespace BetterCoinflips.Configs
         public string TemporaryGodmodeMessage { get; set; } = "Jesteś nieśmiertelny przez 5 sekund!";
         public string KeycardUpgradedMessage { get; set; } = "Twoja karta została ulepszona!";
         public string NoKeycardMessage { get; set; } = "Nie masz przy sobie żadnej karty do ulepszenia!";
+        public string AllPositiveEffectsMessage { get; set; } = "Otrzymałeś wszystkie pozytywne efekty na 60 sekund!";
+        public string RandomHpMessage { get; set; } = "Otrzymałeś losową liczbę HP";
+        public string ThousandHpMessage { get; set; } = "Otrzymałeś 1000 HP na {duration} sekund!";
+        public string RandomGeneratorActivationMessage { get; set; } = "Losowy generator został aktywowany.";
 
         [Description("Here you can set the message for each of these bad coin effects.")]
         public string HpReductionMessage { get; set; } = "Twoje HP zostało zmniejszone o 30%.";
@@ -77,11 +81,15 @@ namespace BetterCoinflips.Configs
         public string TeslaTpMessage { get; set; } = "Jesteś może elektrykiem?";
         public string TeslaTpAfterWarheadMessage { get; set; } = "Zostałeś przeteleportowany do strefy radioaktywnej.";
         public string FakeNtfMessage { get; set; } = "Podobno NTF wchodzi do placówki.";
-        public string RandomTeleportationMessage { get; set; } = "Będziesz losowo teleportowany przez następne 20 sekund!"; 
-        
+        public string RandomTeleportationMessage { get; set; } = "Będziesz losowo teleportowany przez następne 20 sekund!";
+        public string UpsideDownScaleMessage { get; set; } = "Twoja postać obróciła się góry nogami!";
+
         [Description("This message will be broadcast to both players.")]
         public string InventorySwapMessage { get; set; } = "Twój ekwipunek został zmieniony z losowym graczem.";
         public string TeleportToSpawnMessage { get; set; } = "Wszyscy zostali przeteleportowani na swoje początkowe miejsce respawnu!";
         public string LightZoneDecontaminationMessage { get; set; } = "Dekontaminacja strefy Light na 5 sekund.";
+        public string ZoneDoorLockMessage { get; set; } = "Wszystkie drzwi w tej strefie zostały zablokowane na 10 sekund!";
+        public string RandomItemDropMessage { get; set; } = "Twoje przedmioty zaczynają wypadać z ekwipunku!";
+        public string WalkingTimeBombMessage { get; set; } = "Jesteś chodzącą bombą";
     }
 }
