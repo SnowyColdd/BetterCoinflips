@@ -29,6 +29,9 @@ Jest to plugin do gry SCP:SL który dodaje nagrode lub antynagrode za rzut monet
  15. Otrzyma tymczasową nieśmiertelność na 5 sekund.
  16. Jego karta dostępu zostanie ulepszona do wyższego poziomu.
  17. Cała jego amunicja zostanie uzupełniona.
+ 18. Otrzyma losową liczbę HP.
+ 19. Otrzyma 1000 HP na określony czas.
+ 20. Aktywuje losowy generator.
 
 - Za każdym razem, gdy gracz rzuci monetą i wyląduje na reszce, wydarzy się jedna z poniższych sytuacji:  
  1. Jego HP zostanie zmniejszone o 30%.  
@@ -57,6 +60,10 @@ Jest to plugin do gry SCP:SL który dodaje nagrode lub antynagrode za rzut monet
  24. Fałszywy komunikat o przybyciu MTF.
  25. Wszyscy gracze w strefie lekkiej otrzymają efekt dekontaminacji.
  26. Będzie losowo teleportowany po mapie co 5 sekund przez 20 sekund.
+ 27. Zostanie obrócony do góry nogami na 30 sekund.
+ 28. Zablokuje wszystkie drzwi w obecnej strefie na 10 sekund.
+ 29. Zacznie losowo wypadać przedmioty z ekwipunku.
+ 30. Stanie się chodzącą bombą z opóźnionym wybuchem.
 
 - Plugin zapobiega pojawieniu się określonej ilości monet na mapie.
 - Plugin zastąpi specyficzną liczbę wygranych itemów (Domyślnie SCP-500) na monete.
@@ -115,7 +122,6 @@ better_cf:
   - Corroding
   - CardiacArrest
   - Deafened
-  - Decontaminating
   - Disabled
   - Ensnared
   - Exhausted
@@ -124,7 +130,6 @@ better_cf:
   - Hypothermia
   - InsufficientLighting
   - Poisoned
-  - PocketCorroding
   - SeveredHands
   - SinkHole
   - Stained
@@ -137,9 +142,10 @@ better_cf:
   - Invisible
   - MovementBoost
   - RainbowTaste
-  - Scp1853
   - Scp207
   - Vitality
+  - Ghostly
+  - SilentWalk
   # The % chance of receiving a Facility Manager keycard instead of a Containment Engineer one.
   red_card_chance: 15
   # The kick reason.
@@ -162,6 +168,10 @@ better_cf:
   ammo_refill_chance: 25
   temporary_godmode_chance: 5 
   keycard_upgrade_chance: 20
+  all_positive_effects_chance: 5
+  random_hp_chance: 15
+  thousand_hp_chance: 15
+  random_generator_activation_chance: 20
 
   # The chance of these bad effects happening. It's a proportional chance not a % chance.
   hp_reduction_chance: 20
@@ -191,4 +201,8 @@ better_cf:
   fake_ntf_chance: 5
   light_zone_decontamination_chance: 10
   random_teleportation_chance: 15
+  upside_down_scale_chance: 20
+  zone_door_lock_chance: 15
+  random_item_drop_chance: 15
+  walking_time_bomb_chance: 20
 ```
