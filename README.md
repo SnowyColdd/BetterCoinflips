@@ -7,7 +7,7 @@ Ten plugin jest forkiem [BetterCoinflips](https://github.com/Mikihero/BetterCoin
   
 Jest to plugin do gry SCP:SL który dodaje nagrode lub antynagrode za rzut monetą w grze. Za każdym razem gdy rzucisz monetą dostaniesz losowy efekt, zależny od wyniku rzutu monetą.
 
-- Plugin testowany na wersji gry **13.5.1**
+- Plugin testowany na wersji gry **14.0.0**
 
 ## Cechy pluginu:
 
@@ -19,7 +19,7 @@ Jest to plugin do gry SCP:SL który dodaje nagrode lub antynagrode za rzut monet
  5. Jego HP zostanie zwiększone o 10%.
  6. Otrzyma losowy item SCP.
  7. Otrzyma losowy dobry efekt na 5 sekund.
- 8. Otrzyma Logicer'a z 1 ammo.   
+ 8. Dostanie możliwość widzenia graczy przez ściany przez 15 sekund.   
  9. Otrzyma różowego cukierka. 
  10. Otrzyma rewolwer z najgorszymi dodatkami jakie można mieć. 
  11. Otrzyma naładowanego micro hida.
@@ -32,6 +32,8 @@ Jest to plugin do gry SCP:SL który dodaje nagrode lub antynagrode za rzut monet
  18. Otrzyma losową liczbę HP.
  19. Otrzyma 1000 HP na określony czas.
  20. Aktywuje losowy generator.
+ 21. Efekt domina - gracze w pobliżu otrzymują losowe pozytywne efekty.
+ 22. Pętla czasowa - teleportuje graczy z powrotem na ich pozycje po 10 sekundach.
 
 - Za każdym razem, gdy gracz rzuci monetą i wyląduje na reszce, wydarzy się jedna z poniższych sytuacji:  
  1. Jego HP zostanie zmniejszone o 30%.  
@@ -112,6 +114,10 @@ better_cf:
   growth_frequency: 0.2
   # Time in minutes how often a random player will receive a coin. Set 0 to disable. Default: 0
   random_coin_interval: 0
+  # Duration in seconds for which the player will have 1000 HP. Default: 15
+  thousand_hp_duration: 15
+  # Determines whether only the player who flipped the coin should be teleported or all players except spectators and SCP-079. Default: false
+  teleport_all_players_on_coin_flip: false
   # List of bad effects that can be applied to the players. List available at: https://exiled-team.github.io/EXILED/api/Exiled.API.Enums.EffectType.html
   bad_effects:
   - Asphyxiated
@@ -172,6 +178,8 @@ better_cf:
   random_hp_chance: 15
   thousand_hp_chance: 15
   random_generator_activation_chance: 20
+  domino_effect_chance: 15
+  time_loop_chance: 10
 
   # The chance of these bad effects happening. It's a proportional chance not a % chance.
   hp_reduction_chance: 20
