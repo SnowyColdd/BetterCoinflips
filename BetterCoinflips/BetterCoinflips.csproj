@@ -30,9 +30,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="EXILED">
-      <Version>8.9.11</Version>
-    </PackageReference>
+    <PackageReference Include="ExMod.Exiled" Version="9.2.1" />
     <PackageReference Include="Lib.Harmony">
       <Version>2.3.3</Version>
     </PackageReference>
