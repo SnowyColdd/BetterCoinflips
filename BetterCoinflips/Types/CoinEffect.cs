@@ -63,13 +63,15 @@ namespace BetterCoinflips.Types
                     if (player == null || !player.IsAlive)
                     {
                         Log.Warn("Attempted to give a random keycard to a null or dead player");
+                        return;
                     }
 
                     ItemType[] keycards = {
-                    ItemType.KeycardJanitor, ItemType.KeycardScientist, ItemType.KeycardResearchCoordinator,
-                    ItemType.KeycardFacilityManager, ItemType.KeycardGuard, ItemType.KeycardMTFOperative,
-                    ItemType.KeycardMTFCaptain, ItemType.KeycardContainmentEngineer, ItemType.KeycardChaosInsurgency,
-                    ItemType.KeycardZoneManager, ItemType.KeycardMTFPrivate, ItemType.KeycardO5 };
+                        ItemType.KeycardJanitor, ItemType.KeycardScientist, ItemType.KeycardResearchCoordinator,
+                        ItemType.KeycardFacilityManager, ItemType.KeycardGuard, ItemType.KeycardMTFOperative,
+                        ItemType.KeycardMTFCaptain, ItemType.KeycardContainmentEngineer, ItemType.KeycardChaosInsurgency,
+                        ItemType.KeycardZoneManager, ItemType.KeycardMTFPrivate, ItemType.KeycardO5
+                    };
                     ItemType randomKeycard = keycards[Rd.Next(keycards.Length)];
 
                     if (player.Items.Count() < 8)
@@ -180,7 +182,7 @@ namespace BetterCoinflips.Types
                         return;
                     }
 
-                    ItemType[] scpItems = { ItemType.SCP018, ItemType.SCP207, ItemType.AntiSCP207, ItemType.SCP268, ItemType.SCP500, ItemType.SCP330, ItemType.SCP1853, ItemType.SCP1576, ItemType.SCP244a, ItemType.SCP244b };
+                    ItemType[] scpItems = { ItemType.SCP018, ItemType.SCP207, ItemType.AntiSCP207, ItemType.SCP268, ItemType.SCP500, ItemType.SCP330, ItemType.SCP1853, ItemType.SCP1576, ItemType.SCP244a, ItemType.SCP244b, ItemType.SCP1344 };
                     ItemType randomScpItem = scpItems[Rd.Next(scpItems.Length)];
 
                     if (player.Items.Count < 8)
@@ -205,6 +207,12 @@ namespace BetterCoinflips.Types
                         return;
                     }
 
+                    if (!Config.GoodEffects.Any())
+                    {
+                        Log.Warn("No good effects available.");
+                        return;
+                    }
+
                     var effect = Config.GoodEffects.ToList().RandomItem();
                     player.EnableEffect(effect, 5, true);
                     Log.Debug($"Chosen random effect: {effect}");
@@ -215,8 +223,8 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 7: Spawns a Logicer with one ammo for the player.
-            new CoinFlipEffect(Translations.OneAmmoLogicerMessage, player =>
+            // 7: Gives player SCP-1344 wall hack effect for 15 seconds.
+            new CoinFlipEffect(Translations.WallHackMessage, player =>
             {
                 try
                 {
@@ -226,22 +234,11 @@ namespace BetterCoinflips.Types
                         return;
                     }
 
-                    if (player.Items.Count() < 8)
-                    {
-                        Firearm gun = (Firearm)Item.Create(ItemType.GunLogicer);
-                        gun.Ammo = 1;
-                        player.AddItem(gun);
-                    }
-                    else
-                    {
-                        Firearm gun = (Firearm)Item.Create(ItemType.GunLogicer);
-                        gun.Ammo = 1;
-                        gun.CreatePickup(player.Position);
-                    }
+                    player.EnableEffect(EffectType.Scp1344, 15f, true);
                 }
                 catch (Exception ex)
                 {
-                    Log.Error($"Error while spawning Logicer: {ex.Message}");
+                    Log.Error($"Error while giving wall hack effect: {ex.Message}");
                 }
             }),
 
@@ -290,14 +287,14 @@ namespace BetterCoinflips.Types
                     {
                         Firearm revo = (Firearm)Item.Create(ItemType.GunRevolver);
                         revo.AddAttachment(new[]
-                            {AttachmentName.CylinderMag8, AttachmentName.ShortBarrel, AttachmentName.ScopeSight});
+                            {AttachmentName.CylinderMag7, AttachmentName.ShortBarrel, AttachmentName.ScopeSight});
                         player.AddItem(revo);
                     }
                     else
                     {
                         Firearm revo = (Firearm)Item.Create(ItemType.GunRevolver);
                         revo.AddAttachment(new[]
-                            {AttachmentName.CylinderMag8, AttachmentName.ShortBarrel, AttachmentName.ScopeSight});
+                            {AttachmentName.CylinderMag7, AttachmentName.ShortBarrel, AttachmentName.ScopeSight});
                         revo.CreatePickup(player.Position);
                     }
                 }
@@ -318,10 +315,18 @@ namespace BetterCoinflips.Types
                         return;
                     }
 
-                    MicroHIDPickup item = (MicroHIDPickup)Pickup.Create(ItemType.MicroHID);
-                    item.Position = player.Position;
-                    item.Spawn();
-                    item.Energy = 100;
+                    if (player.Items.Count() < 8)
+                    {
+                        var microHid = (MicroHid)Item.Create(ItemType.MicroHID);
+                        microHid.Energy = 100;
+                        player.AddItem(microHid);
+                    }
+                    else
+                    {
+                        var microHid = (MicroHid)Item.Create(ItemType.MicroHID);
+                        microHid.Energy = 100;
+                        microHid.CreatePickup(player.Position);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -340,7 +345,7 @@ namespace BetterCoinflips.Types
                         return;
                     }
 
-                    Respawn.ForceWave(Respawn.NextKnownTeam == SpawnableTeamType.NineTailedFox ? SpawnableTeamType.NineTailedFox : SpawnableTeamType.ChaosInsurgency, true);
+                    Respawn.ForceWave(WaveManager.Waves.RandomItem());
                 }
                 catch (Exception ex)
                 {
@@ -549,10 +554,23 @@ namespace BetterCoinflips.Types
                         return;
                     }
 
+                    List<EffectType> activeEffects = new();
                     foreach (var effect in Config.GoodEffects)
                     {
                         player.EnableEffect(effect, 60, true);
+                        activeEffects.Add(effect);
                     }
+
+                    Timing.CallDelayed(60f, () =>
+                    {
+                        if (player?.IsAlive == true)
+                        {
+                            foreach (var effect in activeEffects)
+                            {
+                                player.DisableEffect(effect);
+                            }
+                        }
+                    });
                 }
                 catch (Exception ex)
                 {
@@ -597,7 +615,7 @@ namespace BetterCoinflips.Types
                     // Revert HP back to original after the duration
                     Timing.CallDelayed(Config.ThousandHpDuration, () =>
                     {
-                        if (player.IsAlive)
+                        if (player?.IsAlive == true)
                         {
                             player.Health = Math.Min(originalHealth, player.Health);
                         }
@@ -633,6 +651,80 @@ namespace BetterCoinflips.Types
                 catch (Exception ex)
                 {
                     Log.Error($"Error while activating random generator: {ex.Message}");
+                }
+            }),
+
+            // 21: Domino effect
+            new CoinFlipEffect(Translations.DominoEffectMessage, player =>
+            {
+                try
+                {
+                    if (player == null || !player.IsAlive)
+                    {
+                        Log.Warn("Attempted to apply domino effect for a null or dead player.");
+                        return;
+                    }
+
+                    foreach (var nearbyPlayer in Player.List.Where(x =>
+                        x.IsAlive && x != player &&
+                        Vector3.Distance(x.Position, player.Position) <= 10f))
+                    {
+                        var effect = Config.GoodEffects.ToList().RandomItem();
+                        nearbyPlayer.EnableEffect(effect, 10f, true);
+                        EventHandlers.SendBroadcast(nearbyPlayer, Translations.DominoEffectReceivedMessage);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"Error while applying domino effect: {ex.Message}");
+                }
+            }),
+
+            // 22: TimeLoop effect
+            new CoinFlipEffect(Translations.TimeLoopMessage, player =>
+            {
+                try
+                {
+                    if (player == null || !player.IsAlive)
+                    {
+                        Log.Warn("Attempted to create time loop for a null or dead player.");
+                        return;
+                    }
+
+                    Dictionary<Player, Vector3> playerPositions = new Dictionary<Player, Vector3>();
+
+                    if (Config.TeleportAllPlayersOnCoinFlip)
+                    {
+                        foreach (var p in Player.List.Where(x => x.IsAlive && x.Role.Type != RoleTypeId.Spectator && x.Role.Type != RoleTypeId.Scp079))
+                        {
+                            playerPositions.Add(p, p.Position);
+                            EventHandlers.SendBroadcast(p, Translations.TimeLoopTeleportingMessage);
+                        }
+                    }
+                    else
+                    {
+                        playerPositions.Add(player, player.Position);
+                    }
+
+                    Timing.CallDelayed(10f, () =>
+                    {
+                        foreach (var kvp in playerPositions)
+                        {
+                            if (kvp.Key?.IsAlive == true)
+                            {
+                                kvp.Key.Teleport(kvp.Value);
+                                EventHandlers.SendBroadcast(kvp.Key,
+                                    Config.TeleportAllPlayersOnCoinFlip ?
+                                        Translations.TimeLoopAllPlayersMessage :
+                                        Translations.TimeLoopSinglePlayerTeleportedMessage);
+
+                            }
+                        }
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"Error while creating time loop: {ex.Message}");
                 }
             }),
         };
@@ -896,7 +988,6 @@ namespace BetterCoinflips.Types
                     }
 
                     var scpName = _scpNames.ToList().RandomItem();
-
                     Cassie.MessageTranslated($"scp {scpName.Key} successfully terminated by automatic security system",
                         $"{scpName.Value} successfully terminated by Automatic Security System.");
                 }
@@ -1269,22 +1360,31 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 23: Teleports everyone to their initial spawn location
+            // 23: Teleports all alive players (excluding Spectators and SCP-079) to their initial spawn location
             new CoinFlipEffect(Translations.TeleportToSpawnMessage, player =>
             {
                 try
                 {
-                    foreach (var p in Player.List)
+                    if (player == null || !player.IsAlive)
                     {
-                        if (p.Role.Type == RoleTypeId.Scp079) continue;
+                        Log.Warn("Attempted to initiate spawn teleport with a null or dead player.");
+                        return;
+                    }
 
+                    foreach (var p in Player.List.Where(x => x.IsAlive && x.Role.Type != RoleTypeId.Spectator && x.Role.Type != RoleTypeId.Scp079))
+                    {
                         if (EventHandlers.InitialSpawnPositions.TryGetValue(p.UserId, out Vector3 spawnPos))
                         {
                             p.Teleport(spawnPos);
+                            EventHandlers.SendBroadcast(p, Translations.TeleportToSpawnPlayerMessage);
+                        }
+                        else
+                        {
+                            Log.Warn($"No initial spawn position found for {p.Nickname}");
                         }
                     }
                 }
-                catch ( Exception ex )
+                catch (Exception ex)
                 {
                     Log.Error($"Error while teleporting to spawn: {ex.Message}");
                 }
@@ -1328,7 +1428,7 @@ namespace BetterCoinflips.Types
                     else
                     {
                         message = $"mtfunit epsilon 11 designated {natoCode} {randomNumber} hasentered. allremaining noscpsleft";
-                        displayMessage = $"Mobile Task Force Unit, Epsilon-11, designated {natoName}-{randomNumber}, has entered the facility. All remaining personnel are advised to proceed with standard evacuation protocols until an MTF squad reaches your destination . Substantial threat to safety remains within the facility -- exercise caution.";
+                        displayMessage = $"Mobile Task Force Unit, Epsilon-11, designated {natoName}-{randomNumber}, has entered the facility. All remaining personnel are advised to proceed with standard evacuation protocols until an MTF squad reaches your destination. Substantial threat to safety remains within the facility -- exercise caution.";
                     }
 
                     Cassie.MessageTranslated(message, displayMessage);
@@ -1370,23 +1470,29 @@ namespace BetterCoinflips.Types
                         return;
                     }
 
-                    int teleportsRemaining = 4;
+                    const int teleportInterval = 5; // seconds
+                    const int totalTeleports = 4; // total numbers of teleports
+                    int teleportsRemaining = totalTeleports;
 
-                    void TeleportPlayer()
+                    Action teleportPlayer = null;
+                    teleportPlayer = () =>
                     {
                         if (teleportsRemaining > 0 && player.IsAlive)
                         {
-                            player.Teleport(Room.Get(Config.RoomsToTeleport.GetRandomValue()));
-                            teleportsRemaining--;
-
-                            if (teleportsRemaining > 0)
+                            var randomRoom = Room.Get(Config.RoomsToTeleport.GetRandomValue());
+                            if (randomRoom != null)
                             {
-                                Timing.CallDelayed(5f, TeleportPlayer);
+                                player.Teleport(randomRoom);
+                                teleportsRemaining--;
+
+                                // Schedule the next teleport
+                                Timing.CallDelayed(teleportInterval, teleportPlayer);
                             }
                         }
-                    }
+                    };
 
-                    TeleportPlayer();
+                    // Start the teleportation process
+                    teleportPlayer();
                 }
                 catch (Exception ex)
                 {
@@ -1394,7 +1500,7 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 27: Turns the player upside down with noganmi for 30 seconds.
+            // 27: Turns the player upside down for 30 seconds.
             new CoinFlipEffect(Translations.UpsideDownScaleMessage, player =>
             {
                 try
@@ -1488,10 +1594,12 @@ namespace BetterCoinflips.Types
                     }
 
                     string PlayerUserId = player.UserId;
+                    RoleTypeId originalRole = player.Role.Type;
+
                     Timing.CallDelayed(10f, () =>
                     {
                         Player currentPlayer = Player.Get(PlayerUserId);
-                        if (currentPlayer != null && currentPlayer.IsAlive && currentPlayer.Role == player.Role)
+                        if (currentPlayer != null && currentPlayer.IsAlive && currentPlayer.Role == originalRole)
                         {
                             ExplosiveGrenade instaBoom = (ExplosiveGrenade)Item.Create(ItemType.GrenadeHE);
                             instaBoom.FuseTime = 0.1f;
