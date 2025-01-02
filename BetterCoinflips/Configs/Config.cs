@@ -57,6 +57,9 @@ namespace BetterCoinflips.Configs
         [Description("Duration in seconds for which the player will have 1000 HP. Default: 15")]
         public int ThousandHpDuration { get; set; } = 15;
 
+        [Description("Determines whether only the player who flipped the coin should be teleported or all players except spectators and SCP-079. Default: false")]
+        public bool TeleportAllPlayersOnCoinFlip { get; set; } = false; // false = teleport only the player, true = teleport all players
+
         [Description("List of bad effects that can be applied to the players. List available at: https://exiled-team.github.io/EXILED/api/Exiled.API.Enums.EffectType.html")]
         public HashSet<EffectType> BadEffects { get; set; } = new()
         {
@@ -174,7 +177,8 @@ namespace BetterCoinflips.Configs
         public HashSet<RoomType> RoomsToTeleport { get; set; } = new()
         {
             RoomType.EzCafeteria,
-            RoomType.EzCheckpointHallway,
+            RoomType.EzCheckpointHallwayA,
+            RoomType.EzCheckpointHallwayB,
             RoomType.EzConference,
             RoomType.EzCrossing,
             RoomType.EzCurve,
@@ -201,9 +205,7 @@ namespace BetterCoinflips.Configs
             RoomType.HczEzCheckpointB,
             RoomType.HczHid,
             RoomType.HczNuke,
-            RoomType.HczServers,
             RoomType.HczStraight,
-            RoomType.HczTCross,
             RoomType.HczTesla,
             RoomType.HczTestRoom,
             RoomType.Lcz173,
@@ -233,7 +235,7 @@ namespace BetterCoinflips.Configs
         public int MoreHpChance { get; set; } = 20;
         public int RandomsScpItemChance { get; set; } = 15;
         public int RandomGoodEffectChance { get; set; } = 30;
-        public int OneAmmoLogicerChance { get; set; } = 5;
+        public int WallHackChance { get; set; } = 5;
         public int PinkCandyChance { get; set; } = 20;
         public int BadRevoChance { get; set; } = 5;
         public int SpawnHidChance { get; set; } = 1;
@@ -247,6 +249,8 @@ namespace BetterCoinflips.Configs
         public int RandomHpChance { get; set; } = 15;
         public int ThousandHpChance { get; set; } = 15;
         public int RandomGeneratorActivationChance { get; set; } = 20;
+        public int DominoEffectChance { get; set; } = 15;
+        public int TimeLoopChance { get; set; } = 10;
 
         [Description("The chance of these bad effects happening. It's a proportional chance not a % chance.")]
         public int HpReductionChance { get; set; } = 20;
