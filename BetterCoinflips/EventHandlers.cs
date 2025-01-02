@@ -9,6 +9,7 @@ using Exiled.Events.EventArgs.Map;
 using Exiled.Events.EventArgs.Player;
 using UnityEngine;
 using MEC;
+using PlayerRoles;
 
 namespace BetterCoinflips
 {
@@ -35,7 +36,7 @@ namespace BetterCoinflips
             { 4, Config.MoreHpChance },
             { 5, Config.RandomsScpItemChance },
             { 6, Config.RandomGoodEffectChance },
-            { 7, Config.OneAmmoLogicerChance },
+            { 7, Config.WallHackChance },
             { 8, Config.PinkCandyChance },
             { 9, Config.BadRevoChance },
             { 10, Config.SpawnHidChance },
@@ -49,6 +50,8 @@ namespace BetterCoinflips
             { 18, Config.RandomHpChance },
             { 19, Config.ThousandHpChance },
             { 20, Config.RandomGeneratorActivationChance },
+            { 21, Config.DominoEffectChance },
+            { 22, Config.TimeLoopChance },
         };
 
         // Dictionary of all bad coin effect chances with an index
@@ -283,7 +286,17 @@ namespace BetterCoinflips
                 }
             }
 
-            InitialSpawnPositions[ev.Player.UserId] = ev.Position;
+            if (ev.Player.Role.Team == Team.FoundationForces || ev.Player.Role.Team == Team.ChaosInsurgency)
+            {
+                InitialSpawnPositions[$"{ev.Player.UserId}_respawn_{ev.Player.Role.Team}"] = ev.Position;
+                Log.Debug($"Stored team respawn for {ev.Player.Nickname}: {ev.Position} (Team: {ev.Player.Role.Team})");
+            }
+            else
+            {
+                // For other roles, always update or set the initial spawn position
+                InitialSpawnPositions[ev.Player.UserId] = ev.Position;
+                Log.Debug($"Stored/Updated spawn for {ev.Player.Nickname}: {ev.Position} (Role: {ev.Player.Role.Type})");
+            }
         }
 
         /// <summary>
