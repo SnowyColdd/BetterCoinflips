@@ -1,89 +1,89 @@
 <a href="https://github.com/snowycoldd/BetterCoinflips/releases"><img src="https://img.shields.io/github/downloads/snowycoldd/BetterCoinflips/total?label=Downloads" alt="Downloads"></a>  
 
-> For the Polish version of this README, see [README.pl.md](./README.pl.md)
+> English version available in [README.md](./README.md)
 
-# Fork  
-This plugin is a fork of [BetterCoinflips](https://github.com/Mikihero/BetterCoinflips) by [Mikihero](https://github.com/Mikihero), rewritten in Polish and enhanced with new features.
+# Fork
+Ten plugin jest forkiem [BetterCoinflips](https://github.com/Mikihero/BetterCoinflips) autorstwa [Mikihero](https://github.com/Mikihero) który jest przepisany na Polski oraz posiada usprawnienia.
 
-## BetterCoinflips  
+## BetterCoinflips
+  
+Jest to plugin do gry SCP:SL który dodaje nagrode lub antynagrode za rzut monetą w grze. Za każdym razem gdy rzucisz monetą dostaniesz losowy efekt, zależny od wyniku rzutu monetą.
 
-A plugin for SCP:SL that adds rewards or penalties based on a coin flip in-game. Every time you flip a coin, you'll get a random effect depending on the outcome.
+- Plugin testowany na wersji gry **14.0.2**
 
-- Plugin tested on game version **14.0.2**
+## Cechy pluginu:
 
-## Plugin Features
+- Za każdym razem kiedy gracz rzuci monetą jedna z poniższych rzeczy się wydarzy:  
+ 1. Otrzyma losową kartę dostępu.  
+ 2. Otrzyma 'zestaw medyczny' składający sie z apteczki oraz tabletek na ból.
+ 3. Otrzyma teleport do drzwi strefowych.
+ 4. Otrzyma pełne leczenie.
+ 5. Jego HP zostanie zwiększone o 10%.
+ 6. Otrzyma losowy item SCP.
+ 7. Otrzyma losowy dobry efekt na 5 sekund.
+ 8. Dostanie możliwość widzenia graczy przez ściany przez 15 sekund.   
+ 9. Otrzyma różowego cukierka. 
+ 10. Otrzyma rewolwer z najgorszymi dodatkami jakie można mieć. 
+ 11. Otrzyma naładowanego micro hida.
+ 12. Natychmiastowy respawn MTF/CI.
+ 13. Otrzyma zmniejszenie postaci do skali 1.3/0.5/1.3.
+ 14. Otrzyma losowy item.
+ 15. Otrzyma tymczasową nieśmiertelność na 5 sekund.
+ 16. Jego karta dostępu zostanie ulepszona do wyższego poziomu.
+ 17. Cała jego amunicja zostanie uzupełniona.
+ 18. Otrzyma losową liczbę HP.
+ 19. Otrzyma 1000 HP na określony czas.
+ 20. Aktywuje losowy generator.
+ 21. Efekt domina - gracze w pobliżu otrzymują losowe pozytywne efekty.
+ 22. Pętla czasowa - teleportuje graczy z powrotem na ich pozycje po 10 sekundach.
 
-- Each time a player flips a coin, one of the following rewards may occur:
-1. Receive a random keycard.  
-2. Receive a "medical kit" (medkit + painkillers).  
-3. Get teleported to zone doors.  
-4. Get fully healed.  
-5. HP increases by 10%.  
-6. Receive a random SCP item.  
-7. Gain a random good effect for 5 seconds.  
-8. Gain wallhack for 15 seconds.  
-9. Receive a pink candy.  
-10. Receive a revolver with the worst possible attachments.  
-11. Receive a charged micro HID.  
-12. Instant MTF/CI respawn.  
-13. Get resized to 1.3/0.5/1.3 scale.  
-14. Receive a random item.  
-15. Gain temporary invincibility for 5 seconds.  
-16. Upgrade held keycard to a higher level.  
-17. Refill all ammo.  
-18. Receive a random amount of HP.  
-19. Gain 1000 HP for a limited time.  
-20. Activate a random generator.  
-21. Domino effect – nearby players receive random positive effects.  
-22. Time loop – teleports players back to their positions after 10 seconds.
+- Za każdym razem, gdy gracz rzuci monetą i wyląduje na reszce, wydarzy się jedna z poniższych sytuacji:  
+ 1. Jego HP zostanie zmniejszone o 30%.  
+ 2. Zostanie przeteleportowany do cel klas D.  
+ 3. Dostanie losowy zły efekt na 5 sekund.  
+ 4. Głowica Alpha Warhead zostanie włączona lub wyłaczona w zależności od jej aktualnego stanu.  
+ 5. Światła na całej mapie zostaną wyłączone na 10 sekund.  
+ 6. Nad głową pojawi się niezabezpieczony granat.
+ 7. Nad głową pojawi się niezabezpieczony granat błyskowy.
+ 8. Zostanie przeteleportowany do SCP gdy jakiś jest żywy, jeśli nie to straci 15HP.
+ 9. Traci wszystko i zostaje mu 1HP.
+ 10. Dostaje aktywonane SCP-244 pod nogami.
+ 11. Otrzymuje furie SCP-173.
+ 12. Fałszywa cassie wysyła komunikat że SCP zostaje zabite przez tesle.
+ 13. Zostaje zmieniony w losowego SCP.
+ 14. Jego ekwipunek zostaje zresetowany.
+ 15. Jego rola zostaje zmieniona na przeciwną strone (klasa D - naukowiec, MTF - CI itp.)
+ 16. Na jego głowie pojawia się granat który natychmiastowo wybucha.
+ 17. Zostaje zamieniony miejscem z innym graczem.
+ 18. Zostanie wyrzucony z serwera.
+ 19. Zostanie zamieniony z losowym obserwujacym.
+ 20. Zostanie przeteleportowany do losowej tesli.
+ 21. Jego ekwipunek zostanie zamieniony z ekwipunkiem innego gracza.
+ 22. Zostanie przeteleportowany do losowego pomieszczenia.
+ 23. Zostanie skuty i straci swoje itemy.
+ 24. Fałszywy komunikat o przybyciu MTF.
+ 25. Wszyscy gracze w strefie lekkiej otrzymają efekt dekontaminacji.
+ 26. Będzie losowo teleportowany po mapie co 5 sekund przez 20 sekund.
+ 27. Zostanie obrócony do góry nogami na 30 sekund.
+ 28. Zablokuje wszystkie drzwi w obecnej strefie na 10 sekund.
+ 29. Zacznie losowo wypadać przedmioty z ekwipunku.
+ 30. Stanie się chodzącą bombą z opóźnionym wybuchem.
 
-- If the coin lands on tails, one of the following punishments may occur:
-1. HP reduced by 30%.  
-2. Teleported to D-Class cells.  
-3. Receive a random bad effect for 5 seconds.  
-4. Alpha Warhead is toggled.  
-5. Global lights turned off for 10 seconds.  
-6. Live grenade appears overhead.  
-7. Live flashbang appears overhead.  
-8. Teleported to a live SCP or lose 15HP.  
-9. Inventory wiped, 1HP left.  
-10. SCP-244 appears under feet.  
-11. Gain SCP-173 rage.  
-12. Fake Cassie announces SCP death by tesla.  
-13. Become a random SCP.  
-14. Inventory reset.  
-15. Team switch (e.g., D-Class ↔ Scientist, MTF ↔ CI).  
-16. Instant explosion grenade on head.  
-17. Swap position with another player.  
-18. Kicked from the server.  
-19. Swapped with a spectator.  
-20. Teleported to a random tesla.  
-21. Swap inventory with another player.  
-22. Teleported to a random room.  
-23. Handcuffed and inventory cleared.  
-24. Fake MTF arrival announcement.  
-25. All players in Light Zone receive decontamination effect.  
-26. Random teleport every 5 seconds for 20 seconds.  
-27. Flipped upside down for 30 seconds.  
-28. All doors in current zone locked for 10 seconds.  
-29. Drops random inventory items.  
-30. Becomes a walking time bomb.
+- Plugin zapobiega pojawieniu się określonej ilości monet na mapie.
+- Plugin zastąpi specyficzną liczbę wygranych itemów (Domyślnie SCP-500) na monete.
+- Plugin przypisze losową liczbę użyć do każdej rzuconej monety. Kwotę tę można odczytać lub ustawić za pomocą polecenia. Jeśli moneta się skończy, pęknie.
 
-- Plugin limits the number of coins that spawn on the map.  
-- Plugin replaces specific items (default: SCP-500) with coins.  
-- Each coin has a randomized number of uses. When it runs out, it breaks.
+## Komendy
 
-## Commands
+- GetSerial - Otrzymuje numer seryjny przedmiotu trzymanego przez Ciebie lub innego gracza.
+- CoinUses - Pobiera lub ustawia liczbę zastosowań danej monety.. Przykład użycia: `coinuses get player 5`, `coin uses set player 4`, `coinuses set serial 10` 
 
-- `GetSerial` – Get serial number of the held item or another player's.  
-- `CoinUses` – Get or set number of uses for a coin. Example: `coinuses get player 5`, `coinuses set player 4`, `coinuses set serial 10`  
+## Permisje
 
-## Permissions
+- bc.coinuses.set - daje dostęp do komendy set CoinUses
+- bc.coinuses.get - daje dostęp do komendy get CoinUses
 
-- `bc.coinuses.set` – Allows use of the `set` subcommand for CoinUses.  
-- `bc.coinuses.get` – Allows use of the `get` subcommand for CoinUses.  
-
-## Default Config
+## Domyślny config pluginu
 
 ```yaml
 better_cf:
