@@ -9,7 +9,7 @@ Ten plugin jest forkiem [BetterCoinflips](https://github.com/Mikihero/BetterCoin
   
 Jest to plugin do gry SCP:SL który dodaje nagrode lub antynagrode za rzut monetą w grze. Za każdym razem gdy rzucisz monetą dostaniesz losowy efekt, zależny od wyniku rzutu monetą.
 
-- Plugin testowany na wersji gry **14.0.2**
+- Plugin testowany na wersji gry **14.1 beta**
 
 ## Cechy pluginu:
 

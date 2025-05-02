@@ -9,7 +9,7 @@ This plugin is a fork of [BetterCoinflips](https://github.com/Mikihero/BetterCoi
 
 A plugin for SCP:SL that adds rewards or penalties based on a coin flip in-game. Every time you flip a coin, you'll get a random effect depending on the outcome.
 
-- Plugin tested on game version **14.0.2**
+- Plugin tested on game version **14.1 beta**
 
 ## Plugin Features
 
