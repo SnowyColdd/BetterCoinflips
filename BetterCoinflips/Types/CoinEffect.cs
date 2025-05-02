@@ -70,7 +70,7 @@ namespace BetterCoinflips.Types
                         ItemType.KeycardJanitor, ItemType.KeycardScientist, ItemType.KeycardResearchCoordinator,
                         ItemType.KeycardFacilityManager, ItemType.KeycardGuard, ItemType.KeycardMTFOperative,
                         ItemType.KeycardMTFCaptain, ItemType.KeycardContainmentEngineer, ItemType.KeycardChaosInsurgency,
-                        ItemType.KeycardZoneManager, ItemType.KeycardMTFPrivate, ItemType.KeycardO5
+                        ItemType.KeycardZoneManager, ItemType.KeycardMTFPrivate, ItemType.KeycardO5, ItemType.SurfaceAccessPass
                     };
                     ItemType randomKeycard = keycards[Rd.Next(keycards.Length)];
 
@@ -230,7 +230,7 @@ namespace BetterCoinflips.Types
                 {
                     if (player == null || !player.IsAlive)
                     {
-                        Log.Warn("Attempted to spawn Logicer for a null or dead player.");
+                        Log.Warn("Attempted to spawn give SCP-1344 for a null or dead player.");
                         return;
                     }
 
@@ -1595,15 +1595,16 @@ namespace BetterCoinflips.Types
 
                     string PlayerUserId = player.UserId;
                     RoleTypeId originalRole = player.Role.Type;
+                    float randomDelay = Rd.Next(10, 181); // Random time between 10-180 seconds
 
-                    Timing.CallDelayed(10f, () =>
+                    Timing.CallDelayed(randomDelay, () =>
                     {
                         Player currentPlayer = Player.Get(PlayerUserId);
                         if (currentPlayer != null && currentPlayer.IsAlive && currentPlayer.Role == originalRole)
                         {
                             ExplosiveGrenade instaBoom = (ExplosiveGrenade)Item.Create(ItemType.GrenadeHE);
                             instaBoom.FuseTime = 0.1f;
-                            instaBoom.SpawnActive(player.Position, player);
+                            instaBoom.SpawnActive(currentPlayer.Position, currentPlayer);
                         }
                     });
                 }
