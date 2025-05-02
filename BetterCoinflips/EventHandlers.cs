@@ -20,7 +20,7 @@ namespace BetterCoinflips
     {
         private static Config Config => Plugin.Instance.Config;
         private static Configs.Translations Translations => Plugin.Instance.Translation;
-        private readonly System.Random _rd = new();
+        private readonly System.Random _random = new();
         private readonly Dictionary<string, int> _respawnCount = new();
         public static Dictionary<string, int> RespawnCount = new();
         public static readonly Dictionary<string, Vector3> InitialSpawnPositions = new();
@@ -90,40 +90,32 @@ namespace BetterCoinflips
             { 30, Config.WalkingTimeBombChance },
         };
 
-        private readonly Dictionary<string, DateTime> _cooldownDict = new();
+        private readonly Dictionary<string, DateTime> _cooldowns = new();
 
         /// <summary>
         /// Sends a broadcast message to the specified player.
         /// </summary>
-        /// <param name="pl">The player to send the message to.</param>
+        /// <param name="player">The player to send the message to.</param>
         /// <param name="message">The message to send.</param>
         /// <param name="showHint">Whether to show a hint to the player.</param>
         /// <param name="isTails">Indicates if the message is related to a tails event.</param>
-        public static void SendBroadcast(Player pl, string message, bool showHint = false, bool isTails = false)
+        public static void SendBroadcast(Player player, string message, bool showHint = false, bool isTails = false)
         {
-            pl.Broadcast(new Exiled.API.Features.Broadcast($"<color=#008000><b>{message}</b></color>", Config.BroadcastTime), true);
+            player.Broadcast(new Exiled.API.Features.Broadcast($"<color=#008000><b>{message}</b></color>", Config.BroadcastTime), true);
 
             if (showHint && Config.HintDuration > 0)
             {
-                pl.ShowHint(isTails ? Translations.HintMessages.First() : Translations.HintMessages.ElementAt(1), Config.HintDuration);
+                var hint = isTails ? Translations.HintMessages.First() : Translations.HintMessages.ElementAt(1);
+                player.ShowHint(hint, Config.HintDuration);
             }
         }
 
         /// <summary>
         /// Handles the coin flip event and applies the appropriate effect based on the result.
         /// </summary>
-        /// <param name="ev">The event arguments for the coin flip</param>
         public void OnCoinFlip(FlippingCoinEventArgs ev)
         {
-            // Broadcast message
-            string message = "";
-            // Used to remove the coin if uses run out, since they are checked before executing the effect
-            bool helper = false;
-
-            // Check if player is on cooldown
-            bool flag = _cooldownDict.ContainsKey(ev.Player.RawUserId)
-                        && (DateTime.UtcNow - _cooldownDict[ev.Player.RawUserId]).TotalSeconds < Config.CoinCooldown;
-            if (flag)
+            if (IsOnCooldown(ev.Player.RawUserId))
             {
                 ev.IsAllowed = false;
                 SendBroadcast(ev.Player, Translations.TossOnCooldownMessage);
@@ -131,127 +123,57 @@ namespace BetterCoinflips
                 return;
             }
 
-            // Set cooldown for player
-            _cooldownDict[ev.Player.RawUserId] = DateTime.UtcNow;
+            SetCooldown(ev.Player.RawUserId);
 
-            // Check if coin has registered uses
-            if (!CoinUses.ContainsKey(ev.Player.CurrentItem.Serial))
-            {
-                CoinUses.Add(ev.Player.CurrentItem.Serial, _rd.Next(Config.MinMaxDefaultCoins[0], Config.MinMaxDefaultCoins[1]));
-                Log.Debug($"Registered a coin, Uses Left: {CoinUses[ev.Player.CurrentItem.Serial]}");
-                
-                // Check if the newly registered coin has no uses
-                if (CoinUses[ev.Player.CurrentItem.Serial] < 1)
-                {
-                    //remove the coin from the uses list
-                    CoinUses.Remove(ev.Player.CurrentItem.Serial);
-                    Log.Debug("Removed the coin");
-                    if (ev.Player.CurrentItem != null)
-                    {
-                        ev.Player.RemoveHeldItem();
-                    }
-                    SendBroadcast(ev.Player, Translations.CoinNoUsesMessage);
-                    return;
-                }
-            }
+            if (!TryRegisterCoinUses(ev))
+                return;
 
-            // Decrement coin uses
-            CoinUses[ev.Player.CurrentItem.Serial]--;
-            Log.Debug($"Uses Left: {CoinUses[ev.Player.CurrentItem.Serial]}");
-
-            // Check if uses that were already registered have been set to 0 to remove the coin after executing the effect
-            if (CoinUses[ev.Player.CurrentItem.Serial] < 1)
-            {
-                helper = true;
-            }
+            DecrementCoinUses(ev.Player.CurrentItem.Serial, out var usesLeft);
 
             Log.Debug($"Is tails: {ev.IsTails}");
 
+            string message;
             if (!ev.IsTails)
             {
-                int totalChance = _goodEffectChances.Values.Sum();
-                int randomNum = _rd.Next(1, totalChance + 1);
-                int headsEvent = 2;
-
-                // Determine heads event
-                foreach (KeyValuePair<int, int> kvp in _goodEffectChances)
-                {
-                    if (randomNum <= kvp.Value)
-                    {
-                        headsEvent = kvp.Key;
-                        break;
-                    }
-
-                    randomNum -= kvp.Value;
-                }
-
-                Log.Debug($"headsEvent = {headsEvent}");
-
-                // Execute the effect
-                var effect = CoinFlipEffect.GoodEffects[headsEvent];
-                effect.Execute(ev.Player);
-                message = effect.Message;
+                message = ExecuteRandomEffect(_goodEffectChances, CoinFlipEffect.GoodEffects
+                    .Select((effect, index) => new { index, effect })
+                    .ToDictionary(x => x.index, x => x.effect), ev.Player);
             }
             else
             {
-                int totalChance = _badEffectChances.Values.Sum();
-                int randomNum = _rd.Next(1, totalChance + 1);
-                int tailsEvent = 13;
-
-                // Detarmine tails event
-                foreach (KeyValuePair<int, int> kvp in _badEffectChances)
-                {
-                    if (randomNum <= kvp.Value)
-                    {
-                        tailsEvent = kvp.Key;
-                        break;
-                    }
-
-                    randomNum -= kvp.Value;
-                }
-
-                Log.Debug($"tailsEvent = {tailsEvent}");
-
-                // Execute the effect
-                var effect = CoinFlipEffect.BadEffects[tailsEvent];
-                effect.Execute(ev.Player);
-                message = effect.Message;
+                message = ExecuteRandomEffect(_badEffectChances, CoinFlipEffect.BadEffects
+                    .Select((effect, index) => new { index, effect })
+                    .ToDictionary(x => x.index, x => x.effect), ev.Player);
             }
 
-            // If the coin has 0 uses remove it
-            if (helper)
+            if (usesLeft < 1)
             {
                 if (ev.Player.CurrentItem != null)
-                {
                     ev.Player.RemoveHeldItem();
-                }
+
                 message += Translations.CoinBreaksMessage;
             }
 
             if (!string.IsNullOrEmpty(message))
-            {
                 SendBroadcast(ev.Player, message, true, ev.IsTails);
-            }
         }
 
         /// <summary>
-        /// Handles the item spawning event to remove default coins.
+        /// Removes default coins from spawning if configured.
         /// </summary>
-        /// <param name="ev">The event arguments for item spawning.</param>
         public void OnSpawningItem(SpawningItemEventArgs ev)
         {
-            if (Config.DefaultCoinsAmount != 0 && ev.Pickup.Type == ItemType.Coin)
-            {
-                Log.Debug($"Removed a coin, coins left to remove {Config.DefaultCoinsAmount}");
-                ev.IsAllowed = false;
-                Config.DefaultCoinsAmount--;
-            }
+            if (Config.DefaultCoinsAmount == 0 || ev.Pickup.Type != ItemType.Coin)
+                return;
+
+            Log.Debug($"Removed a coin, coins left to remove {Config.DefaultCoinsAmount}");
+            ev.IsAllowed = false;
+            Config.DefaultCoinsAmount--;
         }
 
         /// <summary>
         /// Handles the locker filling event to remove or replace coins.
         /// </summary>
-        /// <param name="ev">The event arguments for locker filling.</param>
         public void OnFillingLocker(FillingLockerEventArgs ev)
         {
             if (ev.Pickup.Type == ItemType.Coin && Config.DefaultCoinsAmount != 0)
@@ -273,7 +195,6 @@ namespace BetterCoinflips
         /// <summary>
         /// Handles the player spawn event to adjust player size and track initial positions.
         /// </summary>
-        /// <param name="ev">The event arguments for player spawning.</param>
         public void OnPlayerSpawned(SpawningEventArgs ev)
         {
             if (Config.SizeReductionBehavior == 2 && _respawnCount.ContainsKey(ev.Player.UserId))
@@ -302,7 +223,6 @@ namespace BetterCoinflips
         /// <summary>
         /// Handles the player death event to reset or adjust player size and trigger effects.
         /// </summary>
-        /// <param name="ev">The event arguments for player death.</param>
         public void OnPlayerDied(DiedEventArgs ev)
         {
             if (Config.SizeReductionBehavior == 0)
@@ -329,9 +249,7 @@ namespace BetterCoinflips
         public EventHandlers()
         {
             if (Config.RandomCoinInterval > 0)
-            {
                 Timing.RunCoroutine(RandomCoinRoutine());
-            }
         }
 
         /// <summary>
@@ -369,6 +287,71 @@ namespace BetterCoinflips
                 Pickup.CreateAndSpawn(ItemType.Coin, randomPlayer.Position, Quaternion.identity);
                 SendBroadcast(randomPlayer, Translations.RandomCoinDropMessage);
             }
+        }
+        private bool IsOnCooldown(string userId) => _cooldowns.TryGetValue(userId, out var lastUsed) && (DateTime.UtcNow - lastUsed).TotalSeconds < Config.CoinCooldown;
+
+        private void SetCooldown(string userId) => _cooldowns[userId] = DateTime.UtcNow;
+
+        /// <summary>
+        /// Attempts to register a coin.
+        /// </summary>
+        /// <returns></returns>
+        private bool TryRegisterCoinUses(FlippingCoinEventArgs ev)
+        {
+            if (CoinUses.ContainsKey(ev.Player.CurrentItem.Serial))
+                return true;
+
+            var uses = _random.Next(Config.MinMaxDefaultCoins[0], Config.MinMaxDefaultCoins[1]);
+            CoinUses.Add(ev.Player.CurrentItem.Serial, uses);
+            Log.Debug($"Registered a coin, Uses Left: {uses}");
+
+            if (uses < 1)
+            {
+                CoinUses.Remove(ev.Player.CurrentItem.Serial);
+                Log.Debug("Removed the coin");
+                ev.Player.RemoveHeldItem();
+                SendBroadcast(ev.Player, Translations.CoinNoUsesMessage);
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Handles the coin flip event.
+        /// </summary>
+        private void DecrementCoinUses(ushort serial, out int usesLeft)
+        {
+            CoinUses[serial]--;
+            usesLeft = CoinUses[serial];
+            Log.Debug($"Uses Left: {usesLeft}");
+        }
+
+        /// <summary>
+        /// Executes a random effect based on the provided chances and effects.
+        /// </summary>
+        private string ExecuteRandomEffect(Dictionary<int, int> chances, IReadOnlyDictionary<int, CoinFlipEffect> effects, Player player)
+        {
+            var totalChance = chances.Values.Sum();
+            var randomNum = _random.Next(1, totalChance + 1);
+
+            foreach (var kvp in chances)
+            {
+                int key = kvp.Key;
+                int chance = kvp.Value;
+
+                if (randomNum <= chance)
+                {
+                    effects.TryGetValue(key, out var effect);
+                    effect?.Execute(player);
+                    Log.Debug($"Effect executed: {key}");
+                    return effect?.Message ?? string.Empty;
+                }
+
+                randomNum -= chance;
+            }
+
+            return string.Empty;
         }
     }
 }
