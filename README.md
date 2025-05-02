@@ -1,6 +1,6 @@
 <a href="https://github.com/snowycoldd/BetterCoinflips/releases"><img src="https://img.shields.io/github/downloads/snowycoldd/BetterCoinflips/total?label=Downloads" alt="Downloads"></a>  
 
-> For the Polish version of this README, see [README.pl.md](./README.pl.md)
+> For the Polish version of this README, see [README_PL](./README.pl.md)
 
 # Fork  
 This plugin is a fork of [BetterCoinflips](https://github.com/Mikihero/BetterCoinflips) by [Mikihero](https://github.com/Mikihero), rewritten in Polish and enhanced with new features.

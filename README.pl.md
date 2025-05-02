@@ -1,6 +1,6 @@
 <a href="https://github.com/snowycoldd/BetterCoinflips/releases"><img src="https://img.shields.io/github/downloads/snowycoldd/BetterCoinflips/total?label=Downloads" alt="Downloads"></a>  
 
-> English version available in [README.md](./README.md)
+> English version available in [README_EN](./README.md)
 
 # Fork
 Ten plugin jest forkiem [BetterCoinflips](https://github.com/Mikihero/BetterCoinflips) autorstwa [Mikihero](https://github.com/Mikihero) który jest przepisany na Polski oraz posiada usprawnienia.
