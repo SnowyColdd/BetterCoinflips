@@ -104,7 +104,7 @@ namespace BetterCoinflips.Configs
         public int RedCardChance { get; set; } = 15;
 
         [Description("The kick reason.")] 
-        public string KickReason { get; set; } = "Moneta postanowiła wywalić cię z serwera.";
+        public string KickReason { get; set; } = "Coin has decided to kick you from the server.";
 
         [Description("The list of SCP's that you can turn into by using the coin.")]
         public HashSet<RoleTypeId> ValidScps { get; set; } = new()
@@ -151,7 +151,6 @@ namespace BetterCoinflips.Configs
             ItemType.Adrenaline,
             ItemType.Coin,
             ItemType.Flashlight,
-            ItemType.Jailbird,
             ItemType.Medkit,
             ItemType.Painkillers,
             ItemType.Radio,
@@ -172,6 +171,7 @@ namespace BetterCoinflips.Configs
             ItemType.GunE11SR,
             ItemType.GunFSP9,
             ItemType.GunFRMG0,
+            ItemType.Lantern
         };
 
         public HashSet<RoomType> RoomsToTeleport { get; set; } = new()
@@ -208,6 +208,7 @@ namespace BetterCoinflips.Configs
             RoomType.HczStraight,
             RoomType.HczTesla,
             RoomType.HczTestRoom,
+            RoomType.Hcz127,
             RoomType.Lcz173,
             RoomType.Lcz330,
             RoomType.Lcz914,
@@ -238,7 +239,7 @@ namespace BetterCoinflips.Configs
         public int WallHackChance { get; set; } = 5;
         public int PinkCandyChance { get; set; } = 20;
         public int BadRevoChance { get; set; } = 5;
-        public int SpawnHidChance { get; set; } = 1;
+        public int RandomSpecialWeaponChance { get; set; } = 1;
         public int ForceRespawnChance { get; set; } = 15;
         public int SizeChangeChance { get; set; } = 20;
         public int RandomItemChance { get; set; } = 35;
