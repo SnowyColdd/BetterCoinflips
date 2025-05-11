@@ -35,7 +35,7 @@ namespace BetterCoinflips.Configs
         public string WallHackMessage { get; set; } = "You can see through walls for 15 seconds!";
         public string PinkCandyMessage { get; set; } = "You got a pretty candy!";
         public string BadRevoMessage { get; set; } = "Is that a revolver?";
-        public string SpawnHidMessage { get; set; } = "Did you just get MICRO HID!?";
+        public string RandomSpecialWeaponMessage { get; set; } = "Did you just get SPECIAL WEAPON!?";
         public string ForceRespawnMessage { get; set; } = "Someone respawned... probably.";
         public string SizeChangeMessage { get; set; } = "You've been shrunk.";
         public string RandomItemMessage { get; set; } = "You got a random item!";

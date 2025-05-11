@@ -39,7 +39,7 @@ namespace BetterCoinflips
             { 7, Config.WallHackChance },
             { 8, Config.PinkCandyChance },
             { 9, Config.BadRevoChance },
-            { 10, Config.SpawnHidChance },
+            { 10, Config.RandomSpecialWeaponChance },
             { 11, Config.ForceRespawnChance },
             { 12, Config.SizeChangeChance },
             { 13, Config.RandomItemChance },
