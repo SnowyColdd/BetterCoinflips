@@ -3,7 +3,7 @@
 > For the Polish version of this README, see [README_PL](./README.pl.md)
 
 # Fork  
-This plugin is a fork of [BetterCoinflips](https://github.com/Mikihero/BetterCoinflips) by [Mikihero](https://github.com/Mikihero), rewritten in Polish and enhanced with new features.
+This plugin is a fork of [BetterCoinflips](https://github.com/Mikihero/BetterCoinflips) by [Mikihero](https://github.com/Mikihero), enhanced with new features.
 
 ## BetterCoinflips  
 
@@ -24,7 +24,7 @@ A plugin for SCP:SL that adds rewards or penalties based on a coin flip in-game.
 8. Gain wallhack for 15 seconds.  
 9. Receive a pink candy.  
 10. Receive a revolver with the worst possible attachments.  
-11. Receive a charged micro HID.  
+11. Receive a random special weapon.  
 12. Instant MTF/CI respawn.  
 13. Get resized to 1.3/0.5/1.3 scale.  
 14. Receive a random item.  
@@ -169,7 +169,7 @@ better_cf:
   one_ammo_logicer_chance: 5
   pink_candy_chance: 20
   bad_revo_chance: 5
-  spawn_hid_chance: 1
+  random_special_weapon_chance: 1
   force_respawn_chance: 15
   size_change_chance: 20
   random_item_chance: 35
