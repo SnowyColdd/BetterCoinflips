@@ -8,14 +8,13 @@ namespace BetterCoinflips
 {
     public class Plugin : Plugin<Config, Configs.Translations>
     {
-        public override Version RequiredExiledVersion => new(9, 2, 1);
-        public override Version Version => new(6, 5, 0);
+        public override Version RequiredExiledVersion => new(9, 6, 0);
+        public override Version Version => new(6, 5, 1);
         public override string Author => "Miki_hero - fork(SnowyColdd)";
         public override string Name => "BetterCoinflips";
 
         public static Plugin Instance;
         private EventHandlers _eventHandler;
-        
         public override void OnEnabled()
         {
             Instance = this;

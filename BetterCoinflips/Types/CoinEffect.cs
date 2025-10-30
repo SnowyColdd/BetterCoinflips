@@ -52,32 +52,66 @@ namespace BetterCoinflips.Types
             { "1 0 6", "SCP-106"}
         };
 
-        // GoodEffects list
-        public static List<CoinFlipEffect> GoodEffects = new()
+        /// <summary>
+        /// Checks if a player is null or dead and logs a warning if so.
+        /// </summary>
+        private static bool IsPlayerInvalid(Player player, string warningMessage)
         {
-            // 0: Gives player a random card
+            if (player == null || !player.IsAlive)
+            {
+                Log.Warn(warningMessage);
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Adds an item to player inventory or spawns it as pickup if inventory is full.
+        /// </summary>
+        private static void AddOrSpawnItem(Player player, ItemType itemType)
+        {
+            if (player.Items.Count() < 8)
+                player.AddItem(itemType);
+            else
+                Pickup.CreateAndSpawn(itemType, player.Position, Quaternion.identity);
+        }
+
+        /// <summary>
+        /// Creates an item and either adds to inventory or spawns as pickup.
+        /// </summary>
+        private static T CreateAndAddItem<T>(Player player, ItemType itemType, Action<T> configure = null) where T : Item
+        {
+            T item = (T)Item.Create(itemType);
+            configure?.Invoke(item);
+
+            if (player.Items.Count() < 8)
+                player.AddItem(item);
+            else
+                item.CreatePickup(player.Position);
+
+            return item;
+        }
+
+        // GoodEffects list
+        public static List<CoinFlipEffect> GoodEffects { get; } = new()
+        {
+            // 0: Gives player a random card.
             new CoinFlipEffect(Translations.RandomCardMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to give a random keycard to a null or dead player");
+                    if (IsPlayerInvalid(player, "Attempted to give a random keycard to a null or dead player"))
                         return;
-                    }
 
                     ItemType[] keycards = {
                         ItemType.KeycardJanitor, ItemType.KeycardScientist, ItemType.KeycardResearchCoordinator,
                         ItemType.KeycardFacilityManager, ItemType.KeycardGuard, ItemType.KeycardMTFOperative,
                         ItemType.KeycardMTFCaptain, ItemType.KeycardContainmentEngineer, ItemType.KeycardChaosInsurgency,
-                        ItemType.KeycardZoneManager, ItemType.KeycardMTFPrivate, ItemType.KeycardO5
+                        ItemType.KeycardZoneManager, ItemType.KeycardMTFPrivate, ItemType.KeycardO5, ItemType.SurfaceAccessPass
                     };
                     ItemType randomKeycard = keycards[Rd.Next(keycards.Length)];
 
-                    if (player.Items.Count() < 8)
-                        player.AddItem(randomKeycard);
-                    else
-                        Pickup.CreateAndSpawn(randomKeycard, player.Position, new Quaternion());
+                    AddOrSpawnItem(player, randomKeycard);
                 }
                 catch (Exception ex)
                 {
@@ -90,11 +124,8 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to spawn medkit and painkillers for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to spawn medkit and painkillers for a null or dead player."))
                         return;
-                    }
 
                     if (player.Items.Count() < 7)
                     {
@@ -118,11 +149,8 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to teleport a null or dead player to escape.");
+                    if (IsPlayerInvalid(player, "Attempted to teleport a null or dead player to escape."))
                         return;
-                    }
 
                     player.Teleport(Door.Get(DoorType.EscapePrimary));
                 }
@@ -137,11 +165,8 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to heal a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to heal a null or dead player."))
                         return;
-                    }
 
                     player.Health = player.MaxHealth;
                     player.ResetStamina();
@@ -157,11 +182,8 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to increase health of a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to increase health of a null or dead player."))
                         return;
-                    }
 
                     player.Health *= 1.1f;
                 }
@@ -176,19 +198,17 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to spawn random SCP item for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to spawn random SCP item for a null or dead player."))
                         return;
-                    }
 
-                    ItemType[] scpItems = { ItemType.SCP018, ItemType.SCP207, ItemType.AntiSCP207, ItemType.SCP268, ItemType.SCP500, ItemType.SCP330, ItemType.SCP1853, ItemType.SCP1576, ItemType.SCP244a, ItemType.SCP244b, ItemType.SCP1344 };
+                    ItemType[] scpItems = {
+                        ItemType.SCP018, ItemType.SCP207, ItemType.AntiSCP207, ItemType.SCP268,
+                        ItemType.SCP500, ItemType.SCP330, ItemType.SCP1853, ItemType.SCP1576,
+                        ItemType.SCP244a, ItemType.SCP244b, ItemType.SCP1344, ItemType.GunSCP127
+                    };
                     ItemType randomScpItem = scpItems[Rd.Next(scpItems.Length)];
 
-                    if (player.Items.Count < 8)
-                        player.AddItem(randomScpItem);
-                    else
-                        Pickup.CreateAndSpawn(randomScpItem, player.Position, new Quaternion());
+                    AddOrSpawnItem(player, randomScpItem);
                 }
                 catch (Exception ex)
                 {
@@ -201,11 +221,8 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to apply a random good effect to a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to apply a random good effect to a null or dead player."))
                         return;
-                    }
 
                     if (!Config.GoodEffects.Any())
                     {
@@ -228,11 +245,8 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to spawn Logicer for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to spawn give SCP-1344 for a null or dead player."))
                         return;
-                    }
 
                     player.EnableEffect(EffectType.Scp1344, 15f, true);
                 }
@@ -247,24 +261,11 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to spawn pink candy for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to spawn pink candy for a null or dead player."))
                         return;
-                    }
 
-                    if (player.Items.Count() < 8)
-                    {
-                        Scp330 candy = (Scp330)Item.Create(ItemType.SCP330);
-                        candy.AddCandy(InventorySystem.Items.Usables.Scp330.CandyKindID.Pink);
-                        player.AddItem(candy);
-                    }
-                    else
-                    {
-                        Scp330 candy = (Scp330)Item.Create(ItemType.SCP330);
-                        candy.AddCandy(InventorySystem.Items.Usables.Scp330.CandyKindID.Pink);
-                        candy.CreatePickup(player.Position);
-                    }
+                    CreateAndAddItem<Scp330>(player, ItemType.SCP330, candy =>
+                        candy.AddCandy(InventorySystem.Items.Usables.Scp330.CandyKindID.Pink));
                 }
                 catch (Exception ex)
                 {
@@ -277,26 +278,15 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to spawn customized revolver for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to spawn customized revolver for a null or dead player."))
                         return;
-                    }
 
-                    if (player.Items.Count() < 8)
-                    {
-                        Firearm revo = (Firearm)Item.Create(ItemType.GunRevolver);
-                        revo.AddAttachment(new[]
-                            {AttachmentName.CylinderMag7, AttachmentName.ShortBarrel, AttachmentName.ScopeSight});
-                        player.AddItem(revo);
-                    }
-                    else
-                    {
-                        Firearm revo = (Firearm)Item.Create(ItemType.GunRevolver);
-                        revo.AddAttachment(new[]
-                            {AttachmentName.CylinderMag7, AttachmentName.ShortBarrel, AttachmentName.ScopeSight});
-                        revo.CreatePickup(player.Position);
-                    }
+                    CreateAndAddItem<Firearm>(player, ItemType.GunRevolver, revo =>
+                        revo.AddAttachment(new[] {
+                            AttachmentName.CylinderMag7,
+                            AttachmentName.ShortBarrel,
+                            AttachmentName.ScopeSight,
+                        }));
                 }
                 catch (Exception ex)
                 {
@@ -304,46 +294,34 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 10: Spawns a MicroHID for the player.
-            new CoinFlipEffect(Translations.SpawnHidMessage, player =>
+            // 10: Spawns a random SpecialWeapon for the player.
+            new CoinFlipEffect(Translations.RandomSpecialWeaponMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to spawn MicroHID for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to spawn random SpecialWeapon for a null or dead player."))
                         return;
-                    }
 
-                    if (player.Items.Count() < 8)
-                    {
-                        var microHid = (MicroHid)Item.Create(ItemType.MicroHID);
-                        microHid.Energy = 100;
-                        player.AddItem(microHid);
-                    }
-                    else
-                    {
-                        var microHid = (MicroHid)Item.Create(ItemType.MicroHID);
-                        microHid.Energy = 100;
-                        microHid.CreatePickup(player.Position);
-                    }
+                    ItemType[] specialWeapons = {
+                        ItemType.Jailbird, ItemType.ParticleDisruptor, ItemType.MicroHID
+                    };
+                    ItemType randomSpecialWeapon = specialWeapons[Rd.Next(specialWeapons.Length)];
+
+                    AddOrSpawnItem(player, randomSpecialWeapon);
                 }
                 catch (Exception ex)
                 {
-                    Log.Error($"Error while spawning MicroHID: {ex.Message}");
+                    Log.Error($"Error while spawning random SpecialWeapon: {ex.Message}");
                 }
             }),
 
-            // 11: Forces a respawn wave of the team that has more ticketes
+            // 11: Forces a respawn wave of the team that has more ticketes.
             new CoinFlipEffect(Translations.ForceRespawnMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to force respawn wave for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to force respawn wave for a null or dead player."))
                         return;
-                    }
 
                     Respawn.ForceWave(WaveManager.Waves.RandomItem());
                 }
@@ -353,19 +331,16 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 12: Changes the player's size
+            // 12: Changes the player's size.
             new CoinFlipEffect(Translations.SizeChangeMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to change size of a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to change size of a null or dead player."))
                         return;
-                    }
 
                     player.Scale = new Vector3(1.13f, 0.5f, 1.13f);
-                    // Reset respawn count when size change effect is applied
+                    // Reset respawn count when size change effect is applied.
                     if (!EventHandlers.RespawnCount.ContainsKey(player.UserId))
                     {
                         EventHandlers.RespawnCount[player.UserId] = 0;
@@ -382,17 +357,12 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to spawn random item for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to spawn random item for a null or dead player."))
                         return;
-                    }
 
                     var randomItem = Config.ItemsToGive.ToList().RandomItem();
-                    if (player.Items.Count() < 8)
-                        player.AddItem(randomItem);
-                    else
-                        Item.Create(Config.ItemsToGive.ToList().RandomItem()).CreatePickup(player.Position);
+
+                    AddOrSpawnItem(player, randomItem);
                 }
                 catch (Exception ex)
                 {
@@ -400,16 +370,13 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 14: Refills all ammo and charges MicroHID
+            // 14: Refills all ammo and charges MicroHID.
             new CoinFlipEffect(Translations.AmmoRefillMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to refill ammo for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to refill ammo for a null or dead player."))
                         return;
-                    }
 
                     Dictionary<ItemType, Dictionary<AmmoType, ushort>> armorAmmoLimits = new()
                     {
@@ -459,8 +426,19 @@ namespace BetterCoinflips.Types
                         }
                     };
 
-                    var armors = player.Items.Count(x => x.Type == ItemType.ArmorLight || x.Type == ItemType.ArmorCombat || x.Type == ItemType.ArmorHeavy);
-                    var ammoLimits = armors > 1 ? armorAmmoLimits[ItemType.None] : armorAmmoLimits[player.Items.FirstOrDefault(x => x.Type == ItemType.ArmorLight || x.Type == ItemType.ArmorCombat || x.Type == ItemType.ArmorHeavy)?.Type ?? ItemType.None];
+                    var armor = player.Items.FirstOrDefault(x =>
+                        x.Type == ItemType.ArmorLight ||
+                        x.Type == ItemType.ArmorCombat ||
+                        x.Type == ItemType.ArmorHeavy);
+
+                    var armorsCount = player.Items.Count(x =>
+                        x.Type == ItemType.ArmorLight ||
+                        x.Type == ItemType.ArmorCombat ||
+                        x.Type == ItemType.ArmorHeavy);
+
+                    var ammoLimits = armorsCount > 1
+                        ? armorAmmoLimits[ItemType.None]
+                        : armorAmmoLimits[armor?.Type ?? ItemType.None];
 
                     foreach (var ammoLimit in ammoLimits)
                     {
@@ -471,7 +449,7 @@ namespace BetterCoinflips.Types
                     {
                         if (item is MicroHid microHid)
                         {
-                            microHid.Energy = 100;
+                            microHid.Energy = 1;
                         }
                     }
                 }
@@ -481,19 +459,20 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 15: Gives temporary godmode
+            // 15: Gives temporary godmode.
             new CoinFlipEffect(Translations.TemporaryGodmodeMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to give temporary godmode to a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to give temporary godmode to a null or dead player."))
                         return;
-                    }
 
                     player.IsGodModeEnabled = true;
-                    Timing.CallDelayed(5f, () => player.IsGodModeEnabled = false);
+                    Timing.CallDelayed(5f, () =>
+                    {
+                        if (player?.IsAlive == true)
+                            player.IsGodModeEnabled = false;
+                    });
                 }
                 catch (Exception ex)
                 {
@@ -501,16 +480,13 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 16: Upgrade keycard in inventory
+            // 16: Upgrade keycard in inventory.
             new CoinFlipEffect(Translations.KeycardUpgradedMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to upgrade keycard for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to upgrade keycard for a null or dead player."))
                         return;
-                    }
 
                     var keycards = player.Items.Where(item => item.Type.ToString().Contains("Keycard")).ToList();
 
@@ -524,7 +500,7 @@ namespace BetterCoinflips.Types
 
                     ItemType newCard = cardToUpgrade.Type switch
                     {
-                        ItemType.KeycardJanitor => ItemType.KeycardScientist,
+                        ItemType.KeycardJanitor => ItemType.SurfaceAccessPass,
                         ItemType.KeycardScientist => ItemType.KeycardResearchCoordinator,
                         ItemType.KeycardResearchCoordinator => ItemType.KeycardFacilityManager,
                         ItemType.KeycardGuard => ItemType.KeycardMTFOperative,
@@ -548,11 +524,8 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to apply all positive effects to a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to apply all positive effects to a null or dead player."))
                         return;
-                    }
 
                     List<EffectType> activeEffects = new();
                     foreach (var effect in Config.GoodEffects)
@@ -583,11 +556,8 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to give random HP to a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to give random HP to a null or dead player."))
                         return;
-                    }
 
                     int randomHp = Rd.Next(1, 151);
                     player.Health = randomHp;
@@ -598,21 +568,18 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 19: Grants the player 1000 HP for a configurable duration
+            // 19: Grants the player 1000 HP for a configurable duration.
             new CoinFlipEffect(Translations.ThousandHpMessage.Replace("{duration}", Config.ThousandHpDuration.ToString()), player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to grant 1000 HP to a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to grant 1000 HP to a null or dead player."))
                         return;
-                    }
 
                     float originalHealth = player.Health;
                     player.Health = 1000;
 
-                    // Revert HP back to original after the duration
+                    // Revert HP back to original after the duration.
                     Timing.CallDelayed(Config.ThousandHpDuration, () =>
                     {
                         if (player?.IsAlive == true)
@@ -632,19 +599,15 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to activate a random generator for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to activate a random generator for a null or dead player."))
                         return;
-                    }
 
-                    // Logic to activate a random generator
+                    // Logic to activate a random generator.
                     var generators = Generator.List.Where(x => !x.IsEngaged).ToList();
                     if (generators.Any())
                     {
                         var randomGenerator = generators[Rd.Next(generators.Count)];
                         randomGenerator.IsEngaged = true;
-
                         Log.Info($"Activated generator at {randomGenerator.Position}");
                     }
                 }
@@ -654,16 +617,13 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 21: Domino effect
+            // 21: Domino effect.
             new CoinFlipEffect(Translations.DominoEffectMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to apply domino effect for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to apply domino effect for a null or dead player."))
                         return;
-                    }
 
                     foreach (var nearbyPlayer in Player.List.Where(x =>
                         x.IsAlive && x != player &&
@@ -680,22 +640,22 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 22: TimeLoop effect
+            // 22: TimeLoop effect.
             new CoinFlipEffect(Translations.TimeLoopMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to create time loop for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to create time loop for a null or dead player."))
                         return;
-                    }
 
                     Dictionary<Player, Vector3> playerPositions = new Dictionary<Player, Vector3>();
 
                     if (Config.TeleportAllPlayersOnCoinFlip)
                     {
-                        foreach (var p in Player.List.Where(x => x.IsAlive && x.Role.Type != RoleTypeId.Spectator && x.Role.Type != RoleTypeId.Scp079))
+                        foreach (var p in Player.List.Where(x =>
+                            x.IsAlive && 
+                            x.Role.Type != RoleTypeId.Spectator &&
+                            x.Role.Type != RoleTypeId.Scp079))
                         {
                             playerPositions.Add(p, p.Position);
                             EventHandlers.SendBroadcast(p, Translations.TimeLoopTeleportingMessage);
@@ -714,9 +674,9 @@ namespace BetterCoinflips.Types
                             {
                                 kvp.Key.Teleport(kvp.Value);
                                 EventHandlers.SendBroadcast(kvp.Key,
-                                    Config.TeleportAllPlayersOnCoinFlip ?
-                                        Translations.TimeLoopAllPlayersMessage :
-                                        Translations.TimeLoopSinglePlayerTeleportedMessage);
+                                    Config.TeleportAllPlayersOnCoinFlip
+                                        ? Translations.TimeLoopAllPlayersMessage
+                                        : Translations.TimeLoopSinglePlayerTeleportedMessage);
 
                             }
                         }
@@ -732,16 +692,13 @@ namespace BetterCoinflips.Types
         // BadEffects list
         public static List<CoinFlipEffect> BadEffects = new()
         {
-            // 0: Reduces player's health by 30%
+            // 0: Reduces player's health by 30%.
             new CoinFlipEffect(Translations.HpReductionMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to reduce health of a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to reduce health of a null or dead player."))
                         return;
-                    }
 
                     if ((int) player.Health == 1)
                         player.Kill(DamageType.CardiacArrest);
@@ -759,11 +716,8 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to teleport a null or dead player to class D cells.");
+                    if (IsPlayerInvalid(player, "Attempted to teleport a null or dead player to class D cells."))
                         return;
-                    }
 
                     player.DropHeldItem();
                     player.Teleport(Door.Get(DoorType.PrisonDoor));
@@ -784,15 +738,12 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to apply a random bad effect to a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to apply a random bad effect to a null or dead player."))
                         return;
-                    }
 
                     var effect = Config.BadEffects.ToList().RandomItem();
                 
-                    //prevents players from staying in PD infinitely
+                    // Prevents players from staying in PD infinitely.
                     if (effect == EffectType.PocketCorroding)
                         player.EnableEffect(EffectType.PocketCorroding);
                     else
@@ -811,11 +762,8 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to toggle warhead for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to toggle warhead for a null or dead player."))
                         return;
-                    }
 
                     if (Warhead.IsDetonated || !Warhead.IsInProgress)
                         Warhead.Start();
@@ -828,16 +776,13 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 4: Turns off all lights
+            // 4: Turns off all lights.
             new CoinFlipEffect(Translations.LightsOutMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to turn off lights for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to turn off lights for a null or dead player."))
                         return;
-                    }
 
                     Map.TurnOffAllLights(Config.MapBlackoutTime);
                 }
@@ -847,16 +792,13 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 5: Spawns a live HE grenade
+            // 5: Spawns a live HE grenade.
             new CoinFlipEffect(Translations.LiveGrenadeMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to spawn live grenade for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to spawn live grenade for a null or dead player."))
                         return;
-                    }
 
                     ExplosiveGrenade grenade = (ExplosiveGrenade) Item.Create(ItemType.GrenadeHE);
                     grenade.FuseTime = (float) Config.LiveGrenadeFuseTime;
@@ -868,16 +810,13 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 6: Spawns a flash grenade with a short fuse time, sets the flash owner to the player so that it hopefully blinds people
+            // 6: Spawns a flash grenade with a short fuse time, sets the flash owner to the player so that it hopefully blinds people.
             new CoinFlipEffect(Translations.TrollFlashMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to spawn flash grenade for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to spawn flash grenade for a null or dead player."))
                         return;
-                    }
 
                     FlashGrenade flash = (FlashGrenade) Item.Create(ItemType.GrenadeFlash, player);
                     flash.FuseTime = 1f;
@@ -894,15 +833,13 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to teleport a null or dead player to random SCP.");
+                    if (IsPlayerInvalid(player, "Attempted to teleport a null or dead player to random SCP."))
                         return;
-                    }
 
-                    if (Player.Get(Side.Scp).Any(x => x.Role.Type != RoleTypeId.Scp079))
+                    var scpPlayers = Player.Get(Side.Scp).Where(x => x.Role.Type != RoleTypeId.Scp079).ToList();
+                    if (scpPlayers.Any())
                     {
-                        Player scpPlayer = Player.Get(Side.Scp).Where(x => x.Role.Type != RoleTypeId.Scp079).ToList().RandomItem();
+                        Player scpPlayer = scpPlayers.RandomItem();
                         player.Position = scpPlayer.Position;
                         return;
                     }
@@ -914,16 +851,13 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 8: Sets player hp to 1 or kills if it was already 1
+            // 8: Sets player hp to 1 or kills if it was already 1.
             new CoinFlipEffect(Translations.HugeDamageMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to set HP to 1 for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to set HP to 1 for a null or dead player."))
                         return;
-                    }
 
                     if ((int) player.Health == 1)
                         player.Kill(DamageType.CardiacArrest);
@@ -941,11 +875,8 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to spawn primed SCP-244 vase for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to spawn primed SCP-244 vase for a null or dead player."))
                         return;
-                    }
 
                     Scp244 vase = (Scp244)Item.Create(ItemType.SCP244a);
                     vase.Primed = true;
@@ -957,16 +888,13 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 10: Spawns a tantrum on the player Keywords: shit spawn create
+            // 10: Spawns a tantrum on the player Keywords: shit spawn create.
             new CoinFlipEffect(Translations.ShitPantsMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to place tantrum for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to place tantrum for a null or dead player."))
                         return;
-                    }
 
                     player.PlaceTantrum();
                 }
@@ -981,14 +909,12 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to broadcast fake SCP termination message for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to broadcast fake SCP termination message for a null or dead player."))
                         return;
-                    }
 
                     var scpName = _scpNames.ToList().RandomItem();
-                    Cassie.MessageTranslated($"scp {scpName.Key} successfully terminated by automatic security system",
+                    Cassie.MessageTranslated(
+                        $"scp {scpName.Key} successfully terminated by automatic security system",
                         $"{scpName.Value} successfully terminated by Automatic Security System.");
                 }
                 catch ( Exception ex )
@@ -997,24 +923,21 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 12: Forceclass the player to a random scp from the list Keywords: scp fc forceclass
+            // 12: Forceclass the player to a random scp from the list Keywords: scp fc forceclass.
             new CoinFlipEffect(Translations.TurnIntoScpMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to forceclass a null or dead player to SCP.");
+                    if (IsPlayerInvalid(player, "Attempted to forceclass a null or dead player to SCP."))
                         return;
-                    }
 
                     player.DropItems();
-                    player.Scale = new Vector3(1, 1, 1);
+                    player.Scale = Vector3.one;  // Reset scale to (1,1,1)
 
                     var randomScp = Config.ValidScps.ToList().RandomItem();
                     player.Role.Set(randomScp, RoleSpawnFlags.AssignInventory);
                 
-                    //prevents the player from staying in PD forever
+                    // Prevents the player from staying in PD forever.
                     if (player.CurrentRoom.Type == RoomType.Pocket)
                         player.EnableEffect(EffectType.PocketCorroding);
                 }
@@ -1024,16 +947,13 @@ namespace BetterCoinflips.Types
                 }
             }),
             
-            // 13: Resets player's inventory
+            // 13: Resets player's inventory.
             new CoinFlipEffect(Translations.InventoryResetMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to reset inventory for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to reset inventory for a null or dead player."))
                         return;
-                    }
 
                     player.DropHeldItem();
                     player.ClearInventory();
@@ -1044,53 +964,29 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 14: Flips the players role to the opposite
+            // 14: Flips the players role to the opposite.
             new CoinFlipEffect(Translations.ClassSwapMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to flip role for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to flip role for a null or dead player."))
                         return;
-                    }
 
                     player.DropItems();
-                    switch (player.Role.Type)
-                    {
-                        case RoleTypeId.Scientist:
-                            player.Role.Set(RoleTypeId.ClassD, RoleSpawnFlags.AssignInventory);
-                            break;
-                        case RoleTypeId.ClassD:
-                            player.Role.Set(RoleTypeId.Scientist, RoleSpawnFlags.AssignInventory);
-                            break;
-                        case RoleTypeId.ChaosConscript:
-                        case RoleTypeId.ChaosRifleman:
-                            player.Role.Set(RoleTypeId.NtfSergeant, RoleSpawnFlags.AssignInventory);
-                            break;
-                        case RoleTypeId.ChaosMarauder:
-                        case RoleTypeId.ChaosRepressor:
-                            player.Role.Set(RoleTypeId.NtfCaptain, RoleSpawnFlags.AssignInventory);
-                            break;
-                        case RoleTypeId.FacilityGuard:
-                            player.Role.Set(RoleTypeId.ChaosRifleman, RoleSpawnFlags.AssignInventory);
-                            break;
-                        case RoleTypeId.NtfPrivate:
-                        case RoleTypeId.NtfSergeant:
-                        case RoleTypeId.NtfSpecialist:
-                            player.Role.Set(RoleTypeId.ChaosRifleman, RoleSpawnFlags.AssignInventory);
-                            break;
-                        case RoleTypeId.NtfCaptain:
-                            List<RoleTypeId> roles = new List<RoleTypeId>
-                            {
-                                RoleTypeId.ChaosMarauder,
-                                RoleTypeId.ChaosRepressor
-                            };
-                            player.Role.Set(roles.RandomItem(), RoleSpawnFlags.AssignInventory);
-                            break;
-                    }
 
-                    //prevents the player from staying in PD forever
+                    player.Role.Set(player.Role.Type switch
+                    {
+                        RoleTypeId.Scientist => RoleTypeId.ClassD,
+                        RoleTypeId.ClassD => RoleTypeId.Scientist,
+                        RoleTypeId.ChaosConscript or RoleTypeId.ChaosRifleman => RoleTypeId.NtfSergeant,
+                        RoleTypeId.ChaosMarauder or RoleTypeId.ChaosRepressor => RoleTypeId.NtfCaptain,
+                        RoleTypeId.FacilityGuard => RoleTypeId.ChaosRifleman,
+                        RoleTypeId.NtfPrivate or RoleTypeId.NtfSergeant or RoleTypeId.NtfSpecialist => RoleTypeId.ChaosRifleman,
+                        RoleTypeId.NtfCaptain => new[] { RoleTypeId.ChaosMarauder, RoleTypeId.ChaosRepressor }.RandomItem(),
+                        _ => player.Role.Type
+                    }, RoleSpawnFlags.AssignInventory);
+
+                    // Prevents the player from staying in Pocket Dimension forever.
                     if (player.CurrentRoom.Type == RoomType.Pocket)
                     {
                         player.EnableEffect(EffectType.PocketCorroding);
@@ -1102,18 +998,15 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 15: Spawns an HE grenade with a very short fuse time
+            // 15: Spawns an HE grenade with a very short fuse time.
             new CoinFlipEffect(Translations.InstantExplosionMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to spawn instant explosion for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to spawn instant explosion for a null or dead player."))
                         return;
-                    }
 
-                    ExplosiveGrenade instaBoom = (ExplosiveGrenade) Item.Create(ItemType.GrenadeHE);
+                    ExplosiveGrenade instaBoom = (ExplosiveGrenade)Item.Create(ItemType.GrenadeHE);
                     instaBoom.FuseTime = 0.1f;
                     instaBoom.SpawnActive(player.Position, player);
                 }
@@ -1123,24 +1016,22 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 16: Swaps positions with another random player
+            // 16: Swaps positions with another random player.
             new CoinFlipEffect(Player.List.Count(x => x.IsAlive && !Config.PlayerSwapIgnoredRoles.Contains(x.Role.Type)) <= 1 ? Translations.PlayerSwapIfOneAliveMessage : Translations.PlayerSwapMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to swap positions for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to swap positions for a null or dead player."))
                         return;
-                    }
 
-                    var playerList = Player.List.Where(x => x.IsAlive && !Config.PlayerSwapIgnoredRoles.Contains(x.Role.Type)).ToList();
+                    var playerList = Player.List
+                    .Where(x => x.IsAlive && !Config.PlayerSwapIgnoredRoles.Contains(x.Role.Type) && x != player)
+                    .ToList();
+
                     playerList.Remove(player);
 
-                    if (playerList.IsEmpty())
-                    {
+                    if (!playerList.Any())
                         return;
-                    }
 
                     var targetPlayer = playerList.RandomItem();
                     var pos = targetPlayer.Position;
@@ -1156,18 +1047,15 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 17: Kicks the player
+            // 17: Kicks the player.
             new CoinFlipEffect(Translations.KickMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to kick a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to kick a null or dead player."))
                         return;
-                    }
 
-                    //delay so the broadcast can be sent to the player and doesn't throw NRE
+                    // Delay so the broadcast can be sent to the player and doesn't throw NRE.
                     Timing.CallDelayed(1f, () => player.Kick(Config.KickReason));
                 }
                 catch ( Exception ex )
@@ -1176,23 +1064,18 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 18: Swap with a spectator
+            // 18: Swap with a spectator.
             new CoinFlipEffect(Player.List.Where(x => x.Role.Type == RoleTypeId.Spectator).IsEmpty() ? Translations.SpectSwapNoSpectsMessage : Translations.SpectSwapPlayerMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to swap with spectator for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to swap with spectator for a null or dead player."))
                         return;
-                    }
 
                     var spectList = Player.List.Where(x => x.Role.Type == RoleTypeId.Spectator).ToList();
 
-                    if (spectList.IsEmpty())
-                    {
+                    if (!spectList.Any())
                         return;
-                    }
 
                     var spect = spectList.RandomItem();
 
@@ -1200,18 +1083,18 @@ namespace BetterCoinflips.Types
                     spect.Teleport(player);
                     spect.Health = player.Health;
 
-                    List<ItemType> playerItems = player.Items.Select(item => item.Type).ToList();
-
-                    foreach (var item in playerItems)
+                    // Copy items to spectator.
+                    foreach (var itemType in player.Items.Select(item => item.Type))
                     {
-                        spect.AddItem(item);
+                        spect.AddItem(itemType);
                     }
                 
-                    //give spect the players ammo, has to be done before ClearInventory() or else ammo will fall on the floor
-                    for (int i = 0; i < player.Ammo.Count; i++)
+                    // Give spect the player's ammo before clearing inventory.
+                    foreach (var ammoEntry in player.Ammo)
                     {
-                        spect.AddAmmo(player.Ammo.ElementAt(i).Key.GetAmmoType(), player.Ammo.ElementAt(i).Value);
-                        player.SetAmmo(player.Ammo.ElementAt(i).Key.GetAmmoType(), 0);
+                        var ammoType = ammoEntry.Key.GetAmmoType();
+                        spect.AddAmmo(ammoType, ammoEntry.Value);
+                        player.SetAmmo(ammoType, 0);
                     }
 
                     player.ClearInventory();
@@ -1225,16 +1108,13 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 19: Teleports to a random Tesla gate if warhead is not detonated
+            // 19: Teleports to a random Tesla gate if warhead is not detonated.
             new CoinFlipEffect(Warhead.IsDetonated ? Translations.TeslaTpAfterWarheadMessage : Translations.TeslaTpMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to teleport to Tesla gate for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to teleport to Tesla gate for a null or dead player."))
                         return;
-                    }
 
                     player.DropHeldItem();
 
@@ -1251,58 +1131,53 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 20: Swaps inventory and ammo with another random player
+            // 20: Swaps inventory and ammo with another random player.
             new CoinFlipEffect(Player.List.Where(x => !Config.InventorySwapIgnoredRoles.Contains(x.Role.Type)).Count(x => x.IsAlive) <= 1 ? Translations.InventorySwapOnePlayerMessage : Translations.InventorySwapMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to swap inventory for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to swap inventory for a null or dead player."))
                         return;
-                    }
 
-                    List<Player> playerList = Player.List.Where(x => x != player && !Config.InventorySwapIgnoredRoles.Contains(x.Role.Type)).ToList();
+                    var alivePlayers = Player.List
+                        .Where(x => x != player && x.IsAlive && !Config.InventorySwapIgnoredRoles.Contains(x.Role.Type))
+                        .ToList();
 
-                    if (playerList.Count(x => x.IsAlive) <= 1)
+                    if (!alivePlayers.Any())
                     {
                         player.Hurt(25);
                         return;
                     }
 
-                    var target = playerList.Where(x => x != player).ToList().RandomItem();
+                    var target = alivePlayers.RandomItem();
 
-                    // Saving items
-                    List<ItemType> items1 = player.Items.Select(item => item.Type).ToList();
-                    List<ItemType> items2 = target.Items.Select(item => item.Type).ToList();
+                    // Saving items.
+                    var items1 = player.Items.Select(item => item.Type).ToList();
+                    var items2 = target.Items.Select(item => item.Type).ToList();
 
-                    // Saving and removing ammo
-                    Dictionary<AmmoType, ushort> ammo1 = new();
-                    Dictionary<AmmoType, ushort> ammo2 = new();
-                    for (int i = 0; i < player.Ammo.Count; i++)
-                    {
-                        ammo1.Add(player.Ammo.ElementAt(i).Key.GetAmmoType(), player.Ammo.ElementAt(i).Value);
-                        player.SetAmmo(ammo1.ElementAt(i).Key, 0);
-                    }
-                    for (int i = 0; i < target.Ammo.Count; i++)
-                    {
-                        ammo2.Add(target.Ammo.ElementAt(i).Key.GetAmmoType(), target.Ammo.ElementAt(i).Value);
-                        target.SetAmmo(ammo2.ElementAt(i).Key, 0);
-                    }
+                    var ammo1 = player.Ammo.ToDictionary(entry => entry.Key.GetAmmoType(), entry => entry.Value);
+                    var ammo2 = target.Ammo.ToDictionary(entry => entry.Key.GetAmmoType(), entry => entry.Value);
+
+                    // Saving and removing ammo.
+                    player.ClearInventory();
+                    target.ClearInventory();
+
+                    foreach (var ammoType in ammo1.Keys)
+                        player.SetAmmo(ammoType, 0);
+                    foreach (var ammoType in ammo2.Keys)
+                        target.SetAmmo(ammoType, 0);
 
                     // setting items
-                    target.ResetInventory(items1);
-                    player.ResetInventory(items2);
+                    foreach (var itemType in items2)
+                        player.AddItem(itemType);
+                    foreach (var itemType in items1)
+                        target.AddItem(itemType);
 
                     // setting ammo
                     foreach (var ammo in ammo2)
-                    {
                         player.SetAmmo(ammo.Key, ammo.Value);
-                    }
                     foreach (var ammo in ammo1)
-                    {
                         target.SetAmmo(ammo.Key, ammo.Value);
-                    }
 
                     EventHandlers.SendBroadcast(target, Translations.InventorySwapMessage);
                 }
@@ -1317,17 +1192,13 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to teleport or spawn candy for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to teleport or spawn candy for a null or dead player."))
                         return;
-                    }
 
                     if (Warhead.IsDetonated)
                     {
-                        Scp330 candy = (Scp330)Item.Create(ItemType.SCP330);
-                        candy.AddCandy(InventorySystem.Items.Usables.Scp330.CandyKindID.Red);
-                        candy.CreatePickup(player.Position);
+                        CreateAndAddItem<Scp330>(player, ItemType.SCP330, candy =>
+                            candy.AddCandy(InventorySystem.Items.Usables.Scp330.CandyKindID.Red));
                         return;
                     }
 
@@ -1339,20 +1210,21 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 22: Handcuffs the player and drops their items
+            // 22: Handcuffs the player and drops their items.
             new CoinFlipEffect(Translations.HandcuffMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to handcuff a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to handcuff a null or dead player."))
                         return;
-                    }
 
                     player.Handcuff();
                     player.DropItems();
-                    Timing.CallDelayed(15f, () => player.RemoveHandcuffs());
+
+                    Timing.CallDelayed(15f, () => {
+                        if (player?.IsAlive == true)
+                            player.RemoveHandcuffs();
+                    });
                 }
                 catch ( Exception ex )
                 {
@@ -1360,18 +1232,18 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 23: Teleports all alive players (excluding Spectators and SCP-079) to their initial spawn location
+            // 23: Teleports all alive players (excluding Spectators and SCP-079) to their initial spawn location.
             new CoinFlipEffect(Translations.TeleportToSpawnMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to initiate spawn teleport with a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to initiate spawn teleport with a null or dead player."))
                         return;
-                    }
 
-                    foreach (var p in Player.List.Where(x => x.IsAlive && x.Role.Type != RoleTypeId.Spectator && x.Role.Type != RoleTypeId.Scp079))
+                    foreach (var p in Player.List.Where(x =>
+                        x.IsAlive &&
+                        x.Role.Type != RoleTypeId.Spectator &&
+                        x.Role.Type != RoleTypeId.Scp079))
                     {
                         if (EventHandlers.InitialSpawnPositions.TryGetValue(p.UserId, out Vector3 spawnPos))
                         {
@@ -1390,16 +1262,13 @@ namespace BetterCoinflips.Types
                 }
             }),
 
-            // 24: Broadcasts a fake NTF spawn message
+            // 24: Broadcasts a fake NTF spawn message.
             new CoinFlipEffect(Translations.FakeNtfMessage, player =>
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to broadcast fake NTF message for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to broadcast fake NTF message for a null or dead player."))
                         return;
-                    }
 
                     int scpCount = Player.Get(Side.Scp).Count();
                     var natoDesignations = new Dictionary<string, string>
@@ -1417,6 +1286,7 @@ namespace BetterCoinflips.Types
                     string natoName = randomNato.Key;
                     string natoCode = randomNato.Value;
                     int randomNumber = Rd.Next(3, 18);
+
                     string message;
                     string displayMessage;
 
@@ -1444,12 +1314,12 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    foreach (var p in Player.List)
+                    if (IsPlayerInvalid(player, "Attempted to add decontamination effect to all players in light for null or dead players."))
+                        return;
+
+                    foreach (var p in Player.List.Where(x => x.CurrentRoom.Zone == ZoneType.LightContainment))
                     {
-                        if (p.CurrentRoom.Zone == ZoneType.LightContainment)
-                        {
-                            p.EnableEffect(EffectType.Decontaminating, 5, true);
-                        }
+                        p.EnableEffect(EffectType.Decontaminating, 5, true);
                     }
                     Map.Broadcast(5, Translations.LightZoneDecontaminationMessage);
                 }
@@ -1464,35 +1334,27 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to randomly teleport a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to randomly teleport a null or dead player."))
                         return;
+
+                    const int teleportInterval = 5; // seconds.
+                    const int totalTeleports = 4; // total number of teleports.
+                    
+                    void ScheduleTeleport(int remainingTeleports)
+                    {
+                        if (remainingTeleports <= 0 || player?.IsAlive != true)
+                            return;
+
+                        var randomRoom = Room.Get(Config.RoomsToTeleport.GetRandomValue());
+                        if (randomRoom != null)
+                        {
+                            player.Teleport(randomRoom);
+                            Timing.CallDelayed(teleportInterval, () => ScheduleTeleport(remainingTeleports - 1));
+                        }
                     }
 
-                    const int teleportInterval = 5; // seconds
-                    const int totalTeleports = 4; // total numbers of teleports
-                    int teleportsRemaining = totalTeleports;
-
-                    Action teleportPlayer = null;
-                    teleportPlayer = () =>
-                    {
-                        if (teleportsRemaining > 0 && player.IsAlive)
-                        {
-                            var randomRoom = Room.Get(Config.RoomsToTeleport.GetRandomValue());
-                            if (randomRoom != null)
-                            {
-                                player.Teleport(randomRoom);
-                                teleportsRemaining--;
-
-                                // Schedule the next teleport
-                                Timing.CallDelayed(teleportInterval, teleportPlayer);
-                            }
-                        }
-                    };
-
-                    // Start the teleportation process
-                    teleportPlayer();
+                    // Start the teleportation process.
+                    ScheduleTeleport(totalTeleports);
                 }
                 catch (Exception ex)
                 {
@@ -1505,15 +1367,16 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to turn upside down a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to turn upside down a null or dead player."))
                         return;
-                    }
 
                     var originalScale = player.Scale;
                     player.Scale = new Vector3(1, -1, 1);
-                    Timing.CallDelayed(30f, () => player.Scale = originalScale);
+
+                    Timing.CallDelayed(30f, () => {
+                        if (player?.IsAlive == true)
+                            player.Scale = originalScale;
+                    });
                 }
                 catch (Exception ex)
                 {
@@ -1526,11 +1389,8 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to lock doors in zone for a null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to lock doors in zone for a null or dead player."))
                         return;
-                    }
 
                     var currentZone = player.CurrentRoom.Zone;
                     var doorsInZone = Door.List.Where(door => door.Room.Zone == currentZone).ToList();
@@ -1558,15 +1418,12 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to start random item dropping for null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to start random item dropping for null or dead player."))
                         return;
-                    }
 
                     void DropRandomItem()
                     {
-                        if (player.IsAlive && player.Items.Any())
+                        if (player?.IsAlive == true && player.Items.Any())
                         {
                             var randomItem = player.Items.ToList().RandomItem();
                             player.DropItem(randomItem);
@@ -1587,23 +1444,21 @@ namespace BetterCoinflips.Types
             {
                 try
                 {
-                    if (player == null || !player.IsAlive)
-                    {
-                        Log.Warn("Attempted to start random item dropping for null or dead player.");
+                    if (IsPlayerInvalid(player, "Attempted to set walking time bomb for null or dead player."))
                         return;
-                    }
 
                     string PlayerUserId = player.UserId;
                     RoleTypeId originalRole = player.Role.Type;
+                    float randomDelay = Rd.Next(10, 181); // Random time between 10-180 seconds.
 
-                    Timing.CallDelayed(10f, () =>
+                    Timing.CallDelayed(randomDelay, () =>
                     {
                         Player currentPlayer = Player.Get(PlayerUserId);
-                        if (currentPlayer != null && currentPlayer.IsAlive && currentPlayer.Role == originalRole)
+                        if (currentPlayer?.IsAlive == true && currentPlayer.Role.Type == originalRole)
                         {
                             ExplosiveGrenade instaBoom = (ExplosiveGrenade)Item.Create(ItemType.GrenadeHE);
                             instaBoom.FuseTime = 0.1f;
-                            instaBoom.SpawnActive(player.Position, player);
+                            instaBoom.SpawnActive(currentPlayer.Position, currentPlayer);
                         }
                     });
                 }

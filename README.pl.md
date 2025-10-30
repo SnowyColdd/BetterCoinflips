@@ -1,15 +1,15 @@
 <a href="https://github.com/snowycoldd/BetterCoinflips/releases"><img src="https://img.shields.io/github/downloads/snowycoldd/BetterCoinflips/total?label=Downloads" alt="Downloads"></a>  
 
-> English version available in [README.md](./README.md)
+> English version available in [README_EN](./README.md)
 
 # Fork
-Ten plugin jest forkiem [BetterCoinflips](https://github.com/Mikihero/BetterCoinflips) autorstwa [Mikihero](https://github.com/Mikihero) który jest przepisany na Polski oraz posiada usprawnienia.
+Ten plugin jest forkiem [BetterCoinflips](https://github.com/Mikihero/BetterCoinflips) autorstwa [Mikihero](https://github.com/Mikihero) posiadający ulepszenia.
 
 ## BetterCoinflips
   
 Jest to plugin do gry SCP:SL który dodaje nagrode lub antynagrode za rzut monetą w grze. Za każdym razem gdy rzucisz monetą dostaniesz losowy efekt, zależny od wyniku rzutu monetą.
 
-- Plugin testowany na wersji gry **14.0.2**
+- Plugin testowany na wersji gry **14.1 beta**
 
 ## Cechy pluginu:
 
@@ -24,7 +24,7 @@ Jest to plugin do gry SCP:SL który dodaje nagrode lub antynagrode za rzut monet
  8. Dostanie możliwość widzenia graczy przez ściany przez 15 sekund.   
  9. Otrzyma różowego cukierka. 
  10. Otrzyma rewolwer z najgorszymi dodatkami jakie można mieć. 
- 11. Otrzyma naładowanego micro hida.
+ 11. Otrzyma losową broń specjalną.
  12. Natychmiastowy respawn MTF/CI.
  13. Otrzyma zmniejszenie postaci do skali 1.3/0.5/1.3.
  14. Otrzyma losowy item.
@@ -169,7 +169,7 @@ better_cf:
   one_ammo_logicer_chance: 5
   pink_candy_chance: 20
   bad_revo_chance: 5
-  spawn_hid_chance: 1
+  random_special_weapon_chance: 1
   force_respawn_chance: 15
   size_change_chance: 20
   random_item_chance: 35
